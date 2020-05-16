@@ -7,7 +7,6 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.*;
 
-//TODO javadoc
 public class BungeeConfig implements Config {
 
     private Configuration config;

@@ -9,9 +9,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.concurrent.TimeUnit;
 
 public class Utility {
-    public static Long stringToLongMillisDuration(String s) {
+    public static Long stringToMillisDuration(String s) {
         StringBuilder builder = new StringBuilder();
         int seconds = 0;
         int minutes = 0;
@@ -59,6 +60,11 @@ public class Utility {
             }
         }
         return 1000L * (seconds + minutes * 60 + hours * 60 * 60 + days * 24 * 60 * 60 + weeks * 7 * 24 * 60 * 60);
+    }
+
+    public static Long stringToTimeUnit(String s, TimeUnit timeUnit) {
+        Long millis = stringToMillisDuration(s);
+        return timeUnit.convert(millis, TimeUnit.MILLISECONDS);
     }
 
     public static String niceFormat(Long seconds, boolean shrink) {
@@ -114,9 +120,11 @@ public class Utility {
         }
         return sb.toString();
     }
+
     public static String niceFormat(Long seconds) {
         return niceFormat(seconds, false);
     }
+
     public static String itemStackArrayToBase64(ItemStack[] items) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -131,13 +139,14 @@ public class Utility {
             throw new RuntimeException("Unable to save item stacks.", var4);
         }
     }
+
     public static ItemStack[] itemStackArrayFromBase64(String data) {
         try {
             ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
             BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
             ItemStack[] items = new ItemStack[dataInput.readInt()];
-            for(int i = 0; i < items.length; ++i) {
-                items[i] = (ItemStack)dataInput.readObject();
+            for (int i = 0; i < items.length; ++i) {
+                items[i] = (ItemStack) dataInput.readObject();
             }
             dataInput.close();
             return items;
