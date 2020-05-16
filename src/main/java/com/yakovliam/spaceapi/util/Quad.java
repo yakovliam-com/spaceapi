@@ -1,4 +1,4 @@
-package com.yakovliam.spaceapi.utility;
+package com.yakovliam.spaceapi.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
