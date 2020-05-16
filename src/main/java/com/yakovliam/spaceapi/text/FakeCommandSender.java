@@ -48,6 +48,11 @@ public class FakeCommandSender implements CommandSender {
     }
 
     @Override
+    public Spigot spigot() {
+        return real.spigot();
+    }
+
+    @Override
     public boolean isPermissionSet(String name) {
         return real.isPermissionSet(name);
     }
