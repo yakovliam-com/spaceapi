@@ -1,6 +1,6 @@
 package com.yakovliam.spaceapi.config.adapter;
 
-import com.yakovliam.spaceapi.config.Config;
+import com.yakovliam.spaceapi.config.BukkitConfig;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -9,10 +9,10 @@ import java.util.Set;
 
 public class BukkitConfigurateAdaption implements ConfigurationAdapter {
 
-    private Config bukkitConfig;
+    private BukkitConfig bukkitConfig;
     private Plugin plugin;
 
-    public BukkitConfigurateAdaption(Plugin plugin, Config bukkitConfig) {
+    public BukkitConfigurateAdaption(Plugin plugin, BukkitConfig bukkitConfig) {
         this.plugin = plugin;
         this.bukkitConfig = bukkitConfig;
     }

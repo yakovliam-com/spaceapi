@@ -1,19 +1,18 @@
 package com.yakovliam.spaceapi.command;
 
 import com.google.common.base.Joiner;
+import com.yakovliam.spaceapi.util.Utility;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
-import tech.presstab.api.util.Utility;
-
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static tech.presstab.api.text.Message.Global.ACCESS_DENIED;
-import static tech.presstab.api.text.Message.Global.PLAYERS_ONLY;
+import static com.yakovliam.spaceapi.text.Message.Global.ACCESS_DENIED;
+import static com.yakovliam.spaceapi.text.Message.Global.PLAYERS_ONLY;
 
 public abstract class Command extends BukkitCommand {
 
