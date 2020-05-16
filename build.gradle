@@ -20,13 +20,22 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // spigot / bukkit
     compileOnly 'org.spigotmc:spigot-api:1.12-R0.1-SNAPSHOT'
+
+    // lombok
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 }
 
-import org.apache.tools.ant.filters.ReplaceTokens
-
-processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        filter ReplaceTokens, tokens: [version: version]
-    }
-}
+//import org.apache.tools.ant.filters.ReplaceTokens
+//
+//processResources {
+//    from(sourceSets.main.resources.srcDirs) {
+//        filter ReplaceTokens, tokens: [version: version]
+//    }
+//}
