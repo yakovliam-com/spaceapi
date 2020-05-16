@@ -4,10 +4,10 @@
 //
 
 package com.yakovliam.spaceapi.gui;
+
 import com.yakovliam.spaceapi.gui.components.ActionButton;
 import com.yakovliam.spaceapi.gui.components.Button;
-import com.yakovliam.spaceapi.gui.components.NoActionButton;
-import com.yakovliam.spaceapi.gui.manager.GuisManager;
+import com.yakovliam.spaceapi.gui.components.PlainButton;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -23,7 +23,6 @@ public class Gui {
     private String displayName;
     private Map<Integer, Button> buttons;
     private int slots;
-    private Inventory inventory;
 
     public Gui(int rows, String displayName, Map<Integer, Button> buttons) {
         this.rows = rows;
@@ -66,25 +65,28 @@ public class Gui {
             }
         }
 
-        this.buttons.put(nextAvailable, new NoActionButton(item));
+        this.buttons.put(nextAvailable, new PlainButton(item));
     }
 
     public void setItem(int slot, ItemStack item) {
-        this.buttons.put(slot, new NoActionButton(item));
+        this.buttons.put(slot, new PlainButton(item));
     }
 
     public void open(Player player) {
         Inventory inventory = Bukkit.createInventory(player, this.slots, this.displayName);
 
+        // set buttons
         for (int i = 0; i < this.slots; ++i) {
             if (this.buttons.get(i) != null) {
                 inventory.setItem(i, this.buttons.get(i).getItem());
             }
         }
 
-        this.inventory = inventory;
+        // create holder
 
-        GuisManager.add(player.getUniqueId(), this);
+        GuiInventoryHolder inventoryHolder = new GuiInventoryHolder(this);
+        inventoryHolder.setInventory(inventory);
+
 
         // close inventory (current one open, whatever it is) first
         player.closeInventory();
@@ -103,9 +105,5 @@ public class Gui {
 
     public Map<Integer, Button> getButtons() {
         return this.buttons;
-    }
-
-    public Inventory getInventory() {
-        return this.inventory;
     }
 }

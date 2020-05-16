@@ -2,9 +2,9 @@ package com.yakovliam.spaceapi.gui.components;
 
 import org.bukkit.inventory.ItemStack;
 
-public class NoActionButton extends Button {
+public class PlainButton extends Button {
 
-    public NoActionButton(ItemStack item) {
+    public PlainButton(ItemStack item) {
         super(item);
     }
 }
