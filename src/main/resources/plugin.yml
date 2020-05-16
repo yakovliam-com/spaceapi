@@ -1,0 +1,5 @@
+name: SpaceAPI
+version: @version@
+main: com.yakovliam.spaceapi.SpaceAPI
+authors: [yakovliam]
+description: API for Space Plugin Series
