@@ -1,73 +1,95 @@
 package com.yakovliam.spaceapi.command;
 
 import com.google.common.base.Joiner;
+import com.yakovliam.spaceapi.abstraction.AbstractPlugin;
 import com.yakovliam.spaceapi.util.Utility;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.command.defaults.BukkitCommand;
-import org.bukkit.entity.Player;
-import java.lang.reflect.Field;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.yakovliam.spaceapi.text.Message.Global.ACCESS_DENIED;
-import static com.yakovliam.spaceapi.text.Message.Global.PLAYERS_ONLY;
-
-public abstract class Command extends BukkitCommand {
+public abstract class Command {
 
     private Set<Command> subCommands = new HashSet<>();
+    private AbstractPlugin plugin;
+    private String name;
+    private String description;
+    private String usageMessage;
+    private List<String> aliases;
 
-    public Command(String name) {
-        this(name, "No description available.", "N/A", Collections.emptyList());
+    public Command(AbstractPlugin plugin, String name) {
+        this(plugin, name, "No description available.", "N/A", Collections.emptyList());
     }
 
-    public Command(String name, String description) {
-        this(name, description, "N/A", Collections.emptyList());
+    public Command(AbstractPlugin plugin, String name, String description) {
+        this(plugin, name, description, "N/A", Collections.emptyList());
     }
 
-    public Command(String name, String description, List<String> aliases) {
-        this(name, description, "N/A", aliases);
+    public Command(AbstractPlugin plugin, String name, String description, List<String> aliases) {
+        this(plugin, name, description, "N/A", aliases);
     }
 
-    public Command(String name, String description, String usage) {
-        this(name, description, usage, Collections.emptyList());
+    public Command(AbstractPlugin plugin, String name, String description, String usage) {
+        this(plugin, name, description, usage, Collections.emptyList());
     }
 
-    public Command(String name, String description, String usageMessage, List<String> aliases) {
-        super(
-                name.toLowerCase(),
-                description,
-                usageMessage,
-                aliases.stream().map(String::toLowerCase).collect(Collectors.toList())
-        );
+    public Command(AbstractPlugin plugin, String name, String description, String usageMessage, List<String> aliases) {
+        this.plugin = plugin;
+        this.name = name.toLowerCase();
+        this.description = description;
+        this.usageMessage = usageMessage;
+        this.aliases = aliases.stream().map(String::toLowerCase).collect(Collectors.toList());
 
-        if (this.getClass().getDeclaredAnnotation(SubCommand.class) == null) register();
+        if (this.getClass().getDeclaredAnnotation(SubCommand.class) == null) plugin.registerCommand(this);
     }
 
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!(sender instanceof Player) && this.getClass().getDeclaredAnnotation(PlayersOnly.class) != null) {
-            PLAYERS_ONLY.msg(sender);
+    public AbstractPlugin getPlugin() {
+        return plugin;
+    }
+
+    public Set<Command> getSubCommands() {
+        return subCommands;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getUsageMessage() {
+        return usageMessage;
+    }
+
+    public List<String> getAliases() {
+        return aliases;
+    }
+
+    public abstract void onCommand(SpaceCommandSender sender, String label, String... args);
+
+    public boolean execute(SpaceCommandSender sender, String commandLabel, String[] args) {
+        if (!sender.isPlayer() && this.getClass().getDeclaredAnnotation(PlayersOnly.class) != null) {
+            //PLAYERS_ONLY.msg(sender); // todo
             return true;
         }
 
         if (!this.checkPermissions(sender)) {
-            ACCESS_DENIED.msg(sender);
+            // ACCESS_DENIED.msg(sender); // todo
             return true;
         }
 
         if (args.length > 0) {
-            for (Command command : subCommands) {
-                if (command.getName().equalsIgnoreCase(args[0]) || command.getAliases().contains(args[0].toLowerCase())) {
-                    command.execute(sender, commandLabel, Arrays.copyOfRange(args, 1, args.length));
+            for (com.yakovliam.spaceapi.command.Command subCommand : this.getSubCommands()) {
+                if (subCommand.getName().equalsIgnoreCase(args[0]) || subCommand.getAliases().contains(args[0].toLowerCase())) {
+                    subCommand.execute(sender, commandLabel, Arrays.copyOfRange(args, 1, args.length));
                     return true;
                 }
             }
         }
 
         try {
-            onCommand(sender, commandLabel, args);
+            this.onCommand(sender, commandLabel, args);
         } catch (CommandException e) {
             sender.sendMessage("Error using " + commandLabel + ": " + e.getMessage());
         }
@@ -75,7 +97,7 @@ public abstract class Command extends BukkitCommand {
         return true;
     }
 
-    private boolean checkPermissions(CommandSender sender) {
+    private boolean checkPermissions(SpaceCommandSender sender) {
         Permissible permissible = this.getClass().getDeclaredAnnotation(Permissible.class);
         if (permissible == null) return true;
 
@@ -85,8 +107,6 @@ public abstract class Command extends BukkitCommand {
 
         return false;
     }
-
-    public abstract void onCommand(CommandSender sender, String label, String[] args);
 
     public int argAsInt(String[] args, int arg, int defaultVal) {
         try {
@@ -117,7 +137,7 @@ public abstract class Command extends BukkitCommand {
 
     public Long argAsDuration(String[] args, int arg) {
         try {
-            return Utility.stringToLongMillisDuration(args[arg]);
+            return Utility.stringToMillisDuration(args[arg]);
         } catch (Exception e) {
             throw new CommandException("argument " + arg + " should be a duration (e.g. 1h30m, 1d, 5w)");
         }
@@ -132,17 +152,4 @@ public abstract class Command extends BukkitCommand {
         subCommands.addAll(Arrays.asList(commands));
     }
 
-    private void register() {
-        SimpleCommandMap commandMap;
-
-        try {
-            Field f = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            f.setAccessible(true);
-            commandMap = (SimpleCommandMap) f.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-
-        commandMap.register(this.getName(), this);
-    }
 }

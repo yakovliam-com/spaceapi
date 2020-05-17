@@ -1,21 +1,17 @@
 package com.yakovliam.spaceapi.text;
 
-import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.Plugin;
+import com.yakovliam.spaceapi.command.SpaceCommandSender;
+import net.md_5.bungee.api.chat.BaseComponent;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
-public class FakeCommandSender implements CommandSender {
+public class FakeCommandSender extends SpaceCommandSender {
 
-    private final CommandSender real;
+    private final SpaceCommandSender real;
 
-    public FakeCommandSender(CommandSender real) {
+    public FakeCommandSender(SpaceCommandSender real) {
         this.real = real;
     }
 
@@ -38,8 +34,8 @@ public class FakeCommandSender implements CommandSender {
     }
 
     @Override
-    public Server getServer() {
-        return real.getServer();
+    public boolean isPlayer() {
+        return false;
     }
 
     @Override
@@ -48,18 +44,18 @@ public class FakeCommandSender implements CommandSender {
     }
 
     @Override
-    public Spigot spigot() {
-        return real.spigot();
+    public UUID getUuid() {
+        return real.getUuid();
     }
 
     @Override
-    public boolean isPermissionSet(String name) {
-        return real.isPermissionSet(name);
+    public void sendMessage(BaseComponent message) {
+        sendMessage(message.toLegacyText());
     }
 
     @Override
-    public boolean isPermissionSet(Permission perm) {
-        return real.isPermissionSet(perm);
+    public void sendMessage(BaseComponent... message) {
+        BaseComponent.toLegacyText(message);
     }
 
     @Override
@@ -67,53 +63,4 @@ public class FakeCommandSender implements CommandSender {
         return real.hasPermission(name);
     }
 
-    @Override
-    public boolean hasPermission(Permission perm) {
-        return real.hasPermission(perm);
-    }
-
-    @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value) {
-        throw new UnsupportedOperationException("fake sender");
-    }
-
-    @Override
-    public PermissionAttachment addAttachment(Plugin plugin) {
-        throw new UnsupportedOperationException("fake sender");
-    }
-
-    @Override
-    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks) {
-        throw new UnsupportedOperationException("fake sender");
-    }
-
-    @Override
-    public PermissionAttachment addAttachment(Plugin plugin, int ticks) {
-        throw new UnsupportedOperationException("fake sender");
-    }
-
-    @Override
-    public void removeAttachment(PermissionAttachment attachment) {
-        throw new UnsupportedOperationException("fake sender");
-    }
-
-    @Override
-    public void recalculatePermissions() {
-        real.recalculatePermissions();
-    }
-
-    @Override
-    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return real.getEffectivePermissions();
-    }
-
-    @Override
-    public boolean isOp() {
-        return real.isOp();
-    }
-
-    @Override
-    public void setOp(boolean value) {
-        throw new UnsupportedOperationException("fake sender");
-    }
 }

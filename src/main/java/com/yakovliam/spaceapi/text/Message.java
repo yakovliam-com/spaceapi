@@ -1,12 +1,10 @@
 package com.yakovliam.spaceapi.text;
 
+import com.yakovliam.spaceapi.command.SpaceCommandSender;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -58,11 +56,11 @@ public class Message {
         messageMap.put(ident.toLowerCase(), this);
     }
 
-    public void msg(CommandSender sender, String... replacers) {
+    public void msg(SpaceCommandSender sender, String... replacers) {
         msg(Collections.singletonList(sender), replacers);
     }
 
-    public void msg(Collection<CommandSender> senders, String... replacers) {
+    public void msg(Collection<SpaceCommandSender> senders, String... replacers) {
         for (BaseComponent[] components : componentsLines) {
             List<BaseComponent> componentList = new ArrayList<>();
             for (BaseComponent component : components) {
@@ -86,27 +84,27 @@ public class Message {
                 }
             }
 
-            for (CommandSender sender : senders) {
+            for (SpaceCommandSender sender : senders) {
                 BaseComponent[] c = componentList.toArray(new BaseComponent[]{});
 
-                if (!(sender instanceof Player)) {
+                if (!sender.isPlayer()) {
                     sender.sendMessage(TextComponent.toLegacyText(c));
                 } else {
-                    ((Player) sender).spigot().sendMessage(c);
+                    sender.sendMessage(c);
                 }
             }
         }
     }
 
-    public List<String> get(CommandSender sender, String... replacers) {
+    public List<String> get(SpaceCommandSender sender, String... replacers) {
         FakeCommandSender fakeSender = new FakeCommandSender(sender);
         msg(fakeSender, replacers);
         return fakeSender.getMessages();
     }
 
-    public void broadcast(String... replacers) {
-        msg(new ArrayList<>(Bukkit.getOnlinePlayers()), replacers);
-    }
+    //public void broadcast(String... replacers) {
+    //    msg(new ArrayList<>(Bukkit.getOnlinePlayers()), replacers);
+    //} // todo make it cross compatible
 
     public static Builder builder(String ident) {
         return new Builder(ident);

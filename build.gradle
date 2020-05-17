@@ -26,6 +26,12 @@ dependencies {
     // bungee
     compile "net.md-5:bungeecord-api:1.15-SNAPSHOT"
 
+    // redis
+    compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
+
+    // hikari
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.1.0'
+
     // lombok
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
