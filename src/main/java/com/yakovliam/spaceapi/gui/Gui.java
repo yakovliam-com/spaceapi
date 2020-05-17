@@ -8,25 +8,31 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class Gui {
+
+    private final JavaPlugin plugin;
+
     private int rows;
     private String displayName;
     private Map<Integer, Button> buttons;
     private int slots;
 
-    public Gui(int rows, String displayName, Map<Integer, Button> buttons) {
+    public Gui(JavaPlugin plugin, int rows, String displayName, Map<Integer, Button> buttons) {
+        this.plugin = plugin;
         this.rows = rows;
         this.displayName = displayName;
         this.buttons = buttons;
         this.slots = rows * 9;
     }
 
-    public Gui(String displayName, int rows) {
+    public Gui(JavaPlugin plugin, String displayName, int rows) {
+        this.plugin = plugin;
         this.rows = rows;
         this.displayName = displayName;
         this.slots = rows * 9;
@@ -78,7 +84,7 @@ public class Gui {
         }
 
         // create holder
-        GuiInventoryHolder inventoryHolder = new GuiInventoryHolder(this);
+        GuiInventoryHolder inventoryHolder = new GuiInventoryHolder(plugin, this);
         inventoryHolder.setInventory(inventory);
 
         // close inventory (current one open, whatever it is) first

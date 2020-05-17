@@ -10,8 +10,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class GuiListener implements Listener {
+
+    private final JavaPlugin plugin;
+
+    public GuiListener(JavaPlugin plugin) {
+        this.plugin = plugin;
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+    }
 
     @EventHandler
     public void onGuiInteract(InventoryClickEvent event) {
@@ -19,6 +27,8 @@ public class GuiListener implements Listener {
         if (inventory == null) return;
         InventoryHolder holder = inventory.getHolder();
         if (!(holder instanceof GuiInventoryHolder)) return;
+        if (!((GuiInventoryHolder) holder).getPlugin().equals(plugin)) return;
+
         if (!(event.getWhoClicked() instanceof Player)) return; // this would be very suspicious
 
         event.setCancelled(true);
