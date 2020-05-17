@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by Fernflower decompiler)
-//
-
 package com.yakovliam.spaceapi.gui;
 
 import com.yakovliam.spaceapi.gui.components.ActionButton;
@@ -35,7 +30,7 @@ public class Gui {
         this.rows = rows;
         this.displayName = displayName;
         this.slots = rows * 9;
-        this.buttons = new HashMap();
+        this.buttons = new HashMap<>();
     }
 
     public void setItemInteraction(int slot, ItemStack item, BiConsumer<Player, InventoryClickEvent> action) {
@@ -83,10 +78,8 @@ public class Gui {
         }
 
         // create holder
-
         GuiInventoryHolder inventoryHolder = new GuiInventoryHolder(this);
         inventoryHolder.setInventory(inventory);
-
 
         // close inventory (current one open, whatever it is) first
         player.closeInventory();
