@@ -24,41 +24,13 @@ public class SpaceAPI {
     @Setter
     private static net.md_5.bungee.api.plugin.Plugin bungeeContextPlugin;
 
-    public SpaceAPI(Plugin bukkitPlugin) {
-        // if already initialized, return (we don't want to RE-initialize)
-        if (instance != null && getBukkitContextPlugin() != null) return;
+    public SpaceAPI(Plugin plugin) {
+        bukkitContextPlugin = plugin;
 
-        // set instance
-        setInstance(this);
-
-        // set context
-        this.context = Context.BUKKIT;
-
-        // register Bukkit listeners
-        bukkitPlugin.getServer().getPluginManager().registerEvents(new ChatListener(), bukkitPlugin);
-        bukkitPlugin.getServer().getPluginManager().registerEvents(new GuiListener(), bukkitPlugin);
+        // register bukkit listeners
     }
 
-    public SpaceAPI(net.md_5.bungee.api.plugin.Plugin bungeePlugin) {
-        // if already initialized, return (we don't want to RE-initialize)
-        if (instance != null && getBungeeContextPlugin() != null) return;
-
-        // set instance
-        setInstance(this);
-
-        // set context
-        this.context = Context.BUNGEECORD;
-    }
-
-
-    public static SpaceAPI getInstance(Plugin bukkitPlugin) {
-        if (instance != null) return instance;
-        return new SpaceAPI(bukkitPlugin);
-    }
-
-
-    public static SpaceAPI getInstance(net.md_5.bungee.api.plugin.Plugin bungeePlugin) {
-        if (instance != null) return instance;
-        return new SpaceAPI(bungeePlugin);
+    public SpaceAPI(net.md_5.bungee.api.plugin.Plugin plugin) {
+        bungeeContextPlugin = plugin;
     }
 }

@@ -117,7 +117,7 @@ public abstract class Command extends BukkitCommand {
 
     public Long argAsDuration(String[] args, int arg) {
         try {
-            return Utility.stringToLongMillisDuration(args[arg]);
+            return Utility.stringToMillisDuration(args[arg]);
         } catch (Exception e) {
             throw new CommandException("argument " + arg + " should be a duration (e.g. 1h30m, 1d, 5w)");
         }
