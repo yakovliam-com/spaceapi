@@ -74,7 +74,14 @@ public class Gui {
     }
 
     public void open(Player player) {
-        Inventory inventory = Bukkit.createInventory(player, this.slots, this.displayName);
+        // create holder
+        GuiInventoryHolder inventoryHolder = new GuiInventoryHolder(plugin, this);
+
+        // create inventory
+        Inventory inventory = Bukkit.createInventory(inventoryHolder, this.slots, this.displayName);
+
+        // set inventory of holder
+        inventoryHolder.setInventory(inventory);
 
         // set buttons
         for (int i = 0; i < this.slots; ++i) {
@@ -82,10 +89,6 @@ public class Gui {
                 inventory.setItem(i, this.buttons.get(i).getItem());
             }
         }
-
-        // create holder
-        GuiInventoryHolder inventoryHolder = new GuiInventoryHolder(plugin, this);
-        inventoryHolder.setInventory(inventory);
 
         // close inventory (current one open, whatever it is) first
         player.closeInventory();

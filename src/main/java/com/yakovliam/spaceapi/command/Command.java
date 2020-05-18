@@ -7,6 +7,9 @@ import com.yakovliam.spaceapi.util.Utility;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.yakovliam.spaceapi.text.Message.Global.ACCESS_DENIED;
+import static com.yakovliam.spaceapi.text.Message.Global.PLAYERS_ONLY;
+
 public abstract class Command {
 
     private Set<Command> subCommands = new HashSet<>();
@@ -70,12 +73,12 @@ public abstract class Command {
 
     public boolean execute(SpaceCommandSender sender, String commandLabel, String[] args) {
         if (!sender.isPlayer() && this.getClass().getDeclaredAnnotation(PlayersOnly.class) != null) {
-            //PLAYERS_ONLY.msg(sender); // todo
+            PLAYERS_ONLY.msg(sender);
             return true;
         }
 
         if (!this.checkPermissions(sender)) {
-            // ACCESS_DENIED.msg(sender); // todo
+            ACCESS_DENIED.msg(sender);
             return true;
         }
 
