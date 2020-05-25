@@ -97,9 +97,11 @@ public class ItemBuilder {
      * @param name The name to change it to.
      */
     public ItemBuilder setName(String name) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
         im.setDisplayName(name);
         is.setItemMeta(im);
         return this;
@@ -112,9 +114,12 @@ public class ItemBuilder {
      * @param color Should we color code?
      */
     public ItemBuilder setName(String name, boolean color) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
+
         im.setDisplayName(color ? net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', name) : name);
         is.setItemMeta(im);
         return this;
@@ -127,9 +132,12 @@ public class ItemBuilder {
      * @param itemFlags The flags to set
      */
     public ItemBuilder setItemFlags(ItemFlag... itemFlags) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
+
         // remove existing flags
         im.getItemFlags().forEach(im::removeItemFlags);
         // set new flags
@@ -145,9 +153,12 @@ public class ItemBuilder {
      * @param itemFlags The flags to add
      */
     public ItemBuilder addItemFlags(ItemFlag... itemFlags) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
+
         // add new flags
         im.addItemFlags(itemFlags);
         is.setItemMeta(im);
@@ -182,10 +193,12 @@ public class ItemBuilder {
      * @param owner The name of the skull's owner.
      */
     public ItemBuilder setSkullOwner(String owner) {
-        if(!is.hasItemMeta()) return this;
-
         try {
             SkullMeta im = (SkullMeta) is.getItemMeta();
+
+            // not applicable to this item
+            if(im == null) return this;
+
             im.setOwner(owner);
             is.setItemMeta(im);
         } catch (ClassCastException expected) {
@@ -200,9 +213,11 @@ public class ItemBuilder {
      * @param level The level
      */
     public ItemBuilder addEnchant(Enchantment ench, int level) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
         im.addEnchant(ench, level, true);
         is.setItemMeta(im);
         return this;
@@ -232,9 +247,11 @@ public class ItemBuilder {
      * @param lore The lore to set it to.
      */
     public ItemBuilder setLore(String... lore) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
         im.setLore(Arrays.asList(lore));
         is.setItemMeta(im);
         return this;
@@ -247,9 +264,11 @@ public class ItemBuilder {
      * @param color Should we color code?
      */
     public ItemBuilder setLore(boolean color, String... lore) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
         im.setLore(color ? Arrays
                 .stream(lore)
                 .map(s -> ChatColor.translateAlternateColorCodes('&', s))
@@ -264,9 +283,11 @@ public class ItemBuilder {
      * @param lore The lore to set it to.
      */
     public ItemBuilder setLore(List<String> lore) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
         im.setLore(lore);
         is.setItemMeta(im);
         return this;
@@ -279,9 +300,11 @@ public class ItemBuilder {
      * @param color Should we color code?
      */
     public ItemBuilder setLore(List<String> lore, boolean color) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
         im.setLore(color ? lore
                 .stream()
                 .map(s -> net.md_5.bungee.api.ChatColor.translateAlternateColorCodes('&', s))
@@ -296,9 +319,11 @@ public class ItemBuilder {
      * @param line The lore to remove.
      */
     public ItemBuilder removeLoreLine(String line) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
         List<String> lore = new ArrayList<>(im.getLore());
         if (!lore.contains(line)) return this;
         lore.remove(line);
@@ -313,9 +338,11 @@ public class ItemBuilder {
      * @param index The index of the lore line to remove.
      */
     public ItemBuilder removeLoreLine(int index) {
-        if(!is.hasItemMeta()) return this;
-
         ItemMeta im = is.getItemMeta();
+
+        // not applicable to this item
+        if(im == null) return this;
+
         List<String> lore = new ArrayList<>(im.getLore());
         if (index < 0 || index > lore.size()) return this;
         lore.remove(index);
