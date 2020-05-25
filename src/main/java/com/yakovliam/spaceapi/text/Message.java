@@ -110,13 +110,25 @@ public class Message {
         return new Builder(ident);
     }
 
+    public static Builder builder(String ident, boolean translateColorCodes) {
+        return new Builder(ident, translateColorCodes);
+    }
+
     public static class Builder {
 
         private final String ident;
+        private final Boolean translateColorCodes;
         private List<ComponentBuilder> cb = new ArrayList<>();
 
         private Builder(String ident) {
             this.ident = ident;
+            this.translateColorCodes = false;
+            cb.add(new ComponentBuilder("").retain(ComponentBuilder.FormatRetention.NONE));
+        }
+
+        private Builder(String ident, boolean translateColorCodes) {
+            this.ident = ident;
+            this.translateColorCodes = translateColorCodes;
             cb.add(new ComponentBuilder("").retain(ComponentBuilder.FormatRetention.NONE));
         }
 
@@ -125,16 +137,16 @@ public class Message {
         }
 
         public Builder main(String text, boolean bold) {
-            getComponentBuilder().append(text).color(main).bold(bold);
+            getComponentBuilder().append(legacyColor(text)).color(main).bold(bold);
             return this;
         }
 
         public Builder info(String text) {
-            return info(text, false);
+            return info(legacyColor(text), false);
         }
 
         public Builder info(String text, boolean bold) {
-            getComponentBuilder().append(text).color(info).bold(bold);
+            getComponentBuilder().append(legacyColor(text)).color(info).bold(bold);
             return this;
         }
 
@@ -143,7 +155,7 @@ public class Message {
         }
 
         public Builder success(String text, boolean bold) {
-            getComponentBuilder().append(text).color(success).bold(bold);
+            getComponentBuilder().append(legacyColor(text)).color(success).bold(bold);
             return this;
         }
 
@@ -152,7 +164,7 @@ public class Message {
         }
 
         public Builder error(String text, boolean bold) {
-            getComponentBuilder().append(text).color(error).bold(bold);
+            getComponentBuilder().append(legacyColor(text)).color(error).bold(bold);
             return this;
         }
 
@@ -161,13 +173,18 @@ public class Message {
         }
 
         public Builder highlight(String text, boolean bold) {
-            getComponentBuilder().append(text).color(highlight).bold(bold);
+            getComponentBuilder().append(legacyColor(text)).color(highlight).bold(bold);
             return this;
         }
 
         public Builder newLine() {
             cb.add(new ComponentBuilder("").retain(ComponentBuilder.FormatRetention.NONE));
             return this;
+        }
+
+        private String legacyColor(String s) {
+            if (!translateColorCodes) return s;
+            return ChatColor.translateAlternateColorCodes('&', s);
         }
 
         public Message build() {
