@@ -13,6 +13,15 @@ public class ConfigKeyTypes {
     private static final KeyFactory<Double> DOUBLE = ConfigurationAdapter::getDouble;
     private static final KeyFactory<Long> LONG = ConfigurationAdapter::getLong;
 
+    private static final KeyFactory<Enum<?>> ENUM = (adapter, path, def) -> {
+        String s = adapter.getString(path, def.name());
+        for (Enum<?> e : def.getDeclaringClass().getEnumConstants()) {
+            if (e.name().equalsIgnoreCase(s))
+                return e;
+        }
+        return null;
+    };
+
     public static BaseConfigKey<Boolean> booleanKey(String path, boolean def) {
         return BOOLEAN.createKey(path, def);
     }
@@ -35,6 +44,10 @@ public class ConfigKeyTypes {
 
     public static BaseConfigKey<Long> longKey(String path, long def) {
         return LONG.createKey(path, def);
+    }
+
+    public static <T extends Enum<T>> BaseConfigKey<T> enumKey(String path, T def) {
+        return (BaseConfigKey<T>) ENUM.createKey(path, def);
     }
 
     public interface KeyFactory<T> {
