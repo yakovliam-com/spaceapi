@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -46,6 +47,23 @@ public class GuiListener implements Listener {
             // yes! do interaction
             ((ActionButton) button).getAction().accept(player, event);
         }  // fall through, as we don't really care what happens as long as the event is cancelled (which it is!!)
+    }
+
+    @EventHandler
+    public void onGuiClose(InventoryCloseEvent event) {
+        Inventory inventory = event.getInventory();
+        if (inventory == null) return;
+        InventoryHolder holder = inventory.getHolder();
+        if (!(holder instanceof GuiInventoryHolder)) return;
+        if (!((GuiInventoryHolder) holder).getPlugin().equals(plugin)) return;
+
+        if (!(event.getPlayer() instanceof Player)) return; // this would be very suspicious
+
+        Gui gui = ((GuiInventoryHolder) holder).getGui();
+        Player player = (Player) event.getPlayer();
+
+        // call close event
+        gui.getCloseAction().getAction().accept(player, event);
     }
 }
 

@@ -2,10 +2,13 @@ package com.yakovliam.spaceapi.gui;
 
 import com.yakovliam.spaceapi.gui.components.ActionButton;
 import com.yakovliam.spaceapi.gui.components.Button;
+import com.yakovliam.spaceapi.gui.components.CloseAction;
 import com.yakovliam.spaceapi.gui.components.PlainButton;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -13,15 +16,22 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class Gui {
 
     private final JavaPlugin plugin;
 
+    @Getter
     private int rows;
+    @Getter
     private String displayName;
+    @Getter
     private Map<Integer, Button> buttons;
+    @Getter
     private int slots;
+    @Getter
+    private CloseAction closeAction;
 
     public Gui(JavaPlugin plugin, int rows, String displayName, Map<Integer, Button> buttons) {
         this.plugin = plugin;
@@ -29,6 +39,7 @@ public class Gui {
         this.displayName = displayName;
         this.buttons = buttons;
         this.slots = rows * 9;
+        this.closeAction = null;
     }
 
     public Gui(JavaPlugin plugin, String displayName, int rows) {
@@ -37,6 +48,7 @@ public class Gui {
         this.displayName = displayName;
         this.slots = rows * 9;
         this.buttons = new HashMap<>();
+        this.closeAction = null;
     }
 
     public void setItemInteraction(int slot, ItemStack item, BiConsumer<Player, InventoryClickEvent> action) {
@@ -73,6 +85,10 @@ public class Gui {
         this.buttons.put(slot, new PlainButton(item));
     }
 
+    public void setCloseAction(BiConsumer<Player, InventoryCloseEvent> action) {
+        this.closeAction = new CloseAction(action);
+    }
+
     public void open(Player player) {
         // create holder
         GuiInventoryHolder inventoryHolder = new GuiInventoryHolder(plugin, this);
@@ -95,17 +111,5 @@ public class Gui {
 
         // re-open, but this time it's the NEW one...this prevents interaction issues
         player.openInventory(inventory);
-    }
-
-    public int getRows() {
-        return this.rows;
-    }
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public Map<Integer, Button> getButtons() {
-        return this.buttons;
     }
 }
