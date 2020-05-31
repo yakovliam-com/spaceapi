@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Gui {
 
@@ -55,6 +55,10 @@ public class Gui {
         this.buttons.put(slot, new ActionButton(item, action));
     }
 
+    public void setItemInteraction(int slot, Function<Player, ItemStack> item, BiConsumer<Player, InventoryClickEvent> action) {
+        this.buttons.put(slot, new ActionButton(item, action));
+    }
+
     public void addItemInteraction(ItemStack item, BiConsumer<Player, InventoryClickEvent> action) {
         int nextAvailable = 0;
 
@@ -67,6 +71,20 @@ public class Gui {
 
         this.buttons.put(nextAvailable, new ActionButton(item, action));
     }
+
+    public void addItemInteraction(Function<Player, ItemStack> item, BiConsumer<Player, InventoryClickEvent> action) {
+        int nextAvailable = 0;
+
+        for (int i = 0; i < this.slots; ++i) {
+            if (this.buttons.get(i) == null) {
+                nextAvailable = i;
+                break;
+            }
+        }
+
+        this.buttons.put(nextAvailable, new ActionButton(item, action));
+    }
+
 
     public void addItem(ItemStack item) {
         int nextAvailable = 0;
@@ -102,7 +120,7 @@ public class Gui {
         // set buttons
         for (int i = 0; i < this.slots; ++i) {
             if (this.buttons.get(i) != null) {
-                inventory.setItem(i, this.buttons.get(i).getItem());
+                inventory.setItem(i, this.buttons.get(i).getItem(player));
             }
         }
 

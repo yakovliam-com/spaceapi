@@ -40,12 +40,12 @@ public class FakeCommandSender extends SpaceCommandSender {
 
     @Override
     public String getName() {
-        return real.getName();
+        return real == null ? null : real.getName();
     }
 
     @Override
     public UUID getUuid() {
-        return real.getUuid();
+        return real == null ? null : real.getUuid();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class FakeCommandSender extends SpaceCommandSender {
 
     @Override
     public void sendMessage(BaseComponent... message) {
-        BaseComponent.toLegacyText(message);
+        messages.add(BaseComponent.toLegacyText(message));
     }
 
     @Override
