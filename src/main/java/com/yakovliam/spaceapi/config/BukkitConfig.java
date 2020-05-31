@@ -61,7 +61,10 @@ public class BukkitConfig implements Config {
         this.directory = directory;
 
         // save resource to directory
-        saveResource(fileName, false);
+        if (!new File(plugin.getDataFolder(), "config.yml").exists())
+            saveResource(fileName, false);
+
+        // todo: check resource config.yml and add missing keys to existing config
 
         // now, create the file object for use
         configFile = new File(directory, fileName);

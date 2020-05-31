@@ -1,6 +1,7 @@
 package com.yakovliam.spaceapi.command;
 
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,7 +26,11 @@ public class BukkitSpaceCommandSender extends SpaceCommandSender {
 
     @Override
     public void sendMessage(BaseComponent... message) {
-        sender.spigot().sendMessage(message);
+        if (sender instanceof Player) {
+            sender.spigot().sendMessage(message);
+        } else {
+            sender.sendMessage(TextComponent.toLegacyText(message));
+        }
     }
 
     @Override
