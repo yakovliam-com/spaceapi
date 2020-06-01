@@ -7,8 +7,8 @@ import com.yakovliam.spaceapi.util.Utility;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.yakovliam.spaceapi.text.Message.Global.ACCESS_DENIED;
-import static com.yakovliam.spaceapi.text.Message.Global.PLAYERS_ONLY;
+import static com.yakovliam.spaceapi.text.LegacyMessage.Global.ACCESS_DENIED;
+import static com.yakovliam.spaceapi.text.LegacyMessage.Global.PLAYERS_ONLY;
 
 public abstract class Command {
 

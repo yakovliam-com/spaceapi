@@ -1,217 +1,91 @@
 package com.yakovliam.spaceapi.text;
 
-import com.yakovliam.spaceapi.command.SpaceCommandSender;
+import com.google.common.base.Joiner;
+import com.yakovliam.spaceapi.config.adapter.ConfigurationAdapter;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.*;
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+@AllArgsConstructor
 public class Message {
 
-    private static ChatColor main;
-    private static ChatColor info;
-    private static ChatColor success;
-    private static ChatColor error;
-    private static ChatColor highlight;
-    private static ChatColor lowKey;
+    private static final char DELIMITER = '$';
 
-    public static void setMain(ChatColor main) {
-        Message.main = main;
+    private List<String> lines;
+    private List<Extra> extras;
+
+    public static Message fromConfigurationSection(ConfigurationAdapter adapter, String key) {
+        List<String> text = adapter.getStringList(key + ".text", Collections.emptyList());
+        if (text.isEmpty()) text = Collections.singletonList(adapter.getString(key + ".text", ""));
+
+        List<Extra> extras = new ArrayList<>(); // todo parse
+        return new Message(text, extras);
     }
 
-    public static void setSuccess(ChatColor success) {
-        Message.success = success;
-    }
+    public List<BaseComponent[]> toBaseComponents() {
 
-    public static void setError(ChatColor error) {
-        Message.error = error;
-    }
+        List<BaseComponent[]> components = new ArrayList<>();
 
-    public static void setHighlight(ChatColor highlight) {
-        Message.highlight = highlight;
-    }
+        int count = 0;
+        for (String text : lines) {
+            text = ChatColor.translateAlternateColorCodes('&', text);
 
-    public static void setLowKey(ChatColor lowKey) {
-        Message.lowKey = lowKey;
-    }
+            ComponentBuilder cb = new ComponentBuilder("");
 
-    public static void setInfo(ChatColor info) {
-        Message.info = info;
-    }
+            int i1, i2 = -1;
+            do {
+                i1 = text.indexOf(DELIMITER, i2 + 1);
+                if (i1 != -1) {
+                    cb.appendLegacy(text.substring(i2 + 1, i1));
 
-    private final String ident;
+                    i2 = text.indexOf(DELIMITER, i1 + 1);
+                    if (i2 != -1) {
+                        BaseComponent[] extras = TextComponent.fromLegacyText(text.substring(i1 + 1, i2));
+                        ComponentBuilder evt = new ComponentBuilder("").append(new TextComponent(extras));
 
-    private final List<BaseComponent[]> componentsLines;
-
-    private static Map<String, Message> messageMap = new HashMap<>();
-
-    private Message(String ident, List<BaseComponent[]> components) {
-        this.ident = ident;
-        this.componentsLines = components;
-
-        messageMap.put(ident.toLowerCase(), this);
-    }
-
-    public void msg(SpaceCommandSender sender, String... replacers) {
-        msg(Collections.singletonList(sender), replacers);
-    }
-
-    public void msg(Collection<SpaceCommandSender> senders, String... replacers) {
-        for (BaseComponent[] components : componentsLines) {
-            List<BaseComponent> componentList = new ArrayList<>();
-            for (BaseComponent component : components) {
-                BaseComponent duplicate = component.duplicate();
-                componentList.add(duplicate);
-
-                if (duplicate instanceof TextComponent) {
-                    String message = ((TextComponent) duplicate).getText();
-
-                    String left = null;
-                    for (String right : replacers) {
-                        if (left == null)
-                            left = right;
-                        else {
-                            message = message.replaceAll(Pattern.quote(left), Matcher.quoteReplacement(right));
-                            left = null;
+                        Extra extra = this.extras.get(count++);
+                        if (extra.tooltip != null) {
+                            evt.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                                    TextComponent.fromLegacyText(Joiner.on("\n").join(extra.tooltip.stream()
+                                            .map(s -> ChatColor.translateAlternateColorCodes('&', s))
+                                            .iterator()))
+                            ));
                         }
+                        if (extra.click != null) {
+                            evt.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, extra.click));
+                        }
+                        if (extra.suggest != null) {
+                            evt.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, extra.suggest));
+                        }
+                        // todo add the rest
+
+                        cb.append(evt.create());
                     }
 
-                    ((TextComponent) duplicate).setText(message);
                 }
+            } while (i1 != -1 && i2 != -1);
+
+            if (i1 == -1 && i2 > 0) {
+                cb.appendLegacy(text.substring(i2 + 1));
             }
 
-            for (SpaceCommandSender sender : senders) {
-                BaseComponent[] c = componentList.toArray(new BaseComponent[]{});
-
-                if (!sender.isPlayer()) {
-                    sender.sendMessage(TextComponent.toLegacyText(c));
-                } else {
-                    sender.sendMessage(c);
-                }
-            }
+            components.add(cb.create());
         }
+
+        return components;
     }
 
-    public List<String> get(SpaceCommandSender sender, String... replacers) {
-        FakeCommandSender fakeSender = new FakeCommandSender(sender);
-        msg(fakeSender, replacers);
-        return fakeSender.getMessages();
-    }
-
-    //public void broadcast(String... replacers) {
-    //    msg(new ArrayList<>(Bukkit.getOnlinePlayers()), replacers);
-    //} // todo make it cross compatible
-
-    public static Builder builder(String ident) {
-        return new Builder(ident);
-    }
-
-    public static Builder builder(String ident, boolean translateColorCodes) {
-        return new Builder(ident, translateColorCodes);
-    }
-
-    public static class Builder {
-
-        private final String ident;
-        private final Boolean translateColorCodes;
-        private List<ComponentBuilder> cb = new ArrayList<>();
-
-        private Builder(String ident) {
-            this.ident = ident;
-            this.translateColorCodes = false;
-            cb.add(new ComponentBuilder("").retain(ComponentBuilder.FormatRetention.NONE));
-        }
-
-        private Builder(String ident, boolean translateColorCodes) {
-            this.ident = ident;
-            this.translateColorCodes = translateColorCodes;
-            cb.add(new ComponentBuilder("").retain(ComponentBuilder.FormatRetention.NONE));
-        }
-
-        public Builder main(String text) {
-            return main(text, false);
-        }
-
-        public Builder main(String text, boolean bold) {
-            getComponentBuilder().append(legacyColor(text)).color(main).bold(bold);
-            return this;
-        }
-
-        public Builder info(String text) {
-            return info(legacyColor(text), false);
-        }
-
-        public Builder info(String text, boolean bold) {
-            getComponentBuilder().append(legacyColor(text)).color(info).bold(bold);
-            return this;
-        }
-
-        public Builder success(String text) {
-            return success(text, false);
-        }
-
-        public Builder success(String text, boolean bold) {
-            getComponentBuilder().append(legacyColor(text)).color(success).bold(bold);
-            return this;
-        }
-
-        public Builder error(String text) {
-            return error(text, false);
-        }
-
-        public Builder error(String text, boolean bold) {
-            getComponentBuilder().append(legacyColor(text)).color(error).bold(bold);
-            return this;
-        }
-
-        public Builder highlight(String text) {
-            return highlight(text, false);
-        }
-
-        public Builder highlight(String text, boolean bold) {
-            getComponentBuilder().append(legacyColor(text)).color(highlight).bold(bold);
-            return this;
-        }
-
-        public Builder newLine() {
-            cb.add(new ComponentBuilder("").retain(ComponentBuilder.FormatRetention.NONE));
-            return this;
-        }
-
-        private String legacyColor(String s) {
-            if (!translateColorCodes) return s;
-            return ChatColor.translateAlternateColorCodes('&', s);
-        }
-
-        public Message build() {
-            List<BaseComponent[]> list = new ArrayList<>();
-            for (ComponentBuilder componentBuilder : cb) {
-                list.add(componentBuilder.create());
-            }
-            return new Message(ident, list);
-        }
-
-        public ComponentBuilder getComponentBuilder() {
-            return cb.get(cb.size() - 1);
-        }
-    }
-
-    public static class Global {
-        public static final Message ACCESS_DENIED = Message.builder("access-denied")
-                .error("Insufficient permissions!")
-                .build();
-
-        public static final Message PLAYERS_ONLY = Message.builder("players-only")
-                .error("Only players are allowed to do this.")
-                .build();
-
-        public static final Message PLAYER_NOT_FOUND = Message.builder("player-not-found")
-                .error("Player not found!")
-                .build();
-
+    @Getter
+    @Setter
+    public static class Extra {
+        private List<String> tooltip;
+        private String click;
+        private String suggest;
     }
 }
