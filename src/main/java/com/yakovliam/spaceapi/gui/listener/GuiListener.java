@@ -63,7 +63,8 @@ public class GuiListener implements Listener {
         Player player = (Player) event.getPlayer();
 
         // call close event
-        gui.getCloseAction().getAction().accept(player, event);
+        if (gui != null && gui.getCloseAction() != null && gui.getCloseAction().getAction() != null)
+            gui.getCloseAction().getAction().accept(player, event);
     }
 }
 
