@@ -1,40 +1,70 @@
 package com.yakovliam.spaceapi.text;
 
 import com.google.common.base.Joiner;
-import com.yakovliam.spaceapi.config.adapter.ConfigurationAdapter;
-import lombok.AllArgsConstructor;
+import com.yakovliam.spaceapi.command.SpaceCommandSender;
 import lombok.Getter;
-import lombok.Setter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-@AllArgsConstructor
 public class Message {
 
     private static final char DELIMITER = '$';
 
-    private List<String> lines;
-    private List<Extra> extras;
+    private final String ident;
+    private final List<String> lines;
+    private final List<Extra> extras;
 
-    public static Message fromConfigurationSection(ConfigurationAdapter adapter, String key) {
-        List<String> text = adapter.getStringList(key + ".text", Collections.emptyList());
-        if (text.isEmpty()) text = Collections.singletonList(adapter.getString(key + ".text", ""));
-
-        List<Extra> extras = new ArrayList<>(); // todo parse
-        return new Message(text, extras);
+    private Message(String ident, List<String> lines, List<Extra> extras) {
+        this.ident = ident;
+        this.lines = lines;
+        this.extras = extras;
     }
 
-    public List<BaseComponent[]> toBaseComponents() {
+    public String getIdent() {
+        return ident;
+    }
+
+    public void msg(SpaceCommandSender sender, String... replacers) {
+        msg(Collections.singletonList(sender), replacers);
+    }
+
+    public void msg(Collection<SpaceCommandSender> senders, String... replacers) {
+        for (BaseComponent[] c : toBaseComponents(replacers)) {
+            for (SpaceCommandSender sender : senders) {
+                if (!sender.isPlayer()) {
+                    sender.sendMessage(TextComponent.toLegacyText(c));
+                } else {
+                    sender.sendMessage(c);
+                }
+            }
+        }
+    }
+
+    public static Builder builder(String ident) {
+        return new Message.Builder(ident);
+    }
+
+    public List<BaseComponent[]> toBaseComponents(String... replacers) {
 
         List<BaseComponent[]> components = new ArrayList<>();
 
         int count = 0;
         for (String text : lines) {
             text = ChatColor.translateAlternateColorCodes('&', text);
+
+            String left = null;
+            for (String right : replacers) {
+                if (left == null)
+                    left = right;
+                else {
+                    text = text.replaceAll(Pattern.quote(left), Matcher.quoteReplacement(right));
+                    left = null;
+                }
+            }
 
             ComponentBuilder cb = new ComponentBuilder("");
 
@@ -57,13 +87,20 @@ public class Message {
                                             .iterator()))
                             ));
                         }
-                        if (extra.click != null) {
-                            evt.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, extra.click));
+
+                        if (extra.action != null) {
+                            switch (extra.action) {
+                                case RUN_COMMAND:
+                                    evt.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, extra.content));
+                                    break;
+                                case SUGGEST:
+                                    evt.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, extra.content));
+                                    break;
+                                case OPEN_URL:
+                                    evt.event(new ClickEvent(ClickEvent.Action.OPEN_URL, extra.content));
+                                    break;
+                            }
                         }
-                        if (extra.suggest != null) {
-                            evt.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, extra.suggest));
-                        }
-                        // todo add the rest
 
                         cb.append(evt.create());
                     }
@@ -82,10 +119,62 @@ public class Message {
     }
 
     @Getter
-    @Setter
     public static class Extra {
         private List<String> tooltip;
-        private String click;
-        private String suggest;
+
+        private ClickAction action;
+        private String content;
+
+        public Extra() {
+        }
+
+        public Extra withAction(ClickAction action, String content) {
+            this.action = action;
+            this.content = content;
+            return this;
+        }
+
+        public Extra withTooltip(String... tooltip) {
+            this.tooltip = Arrays.asList(tooltip);
+            return this;
+        }
+
+        public Extra withTooltip(List<String> tooltip) {
+            this.tooltip = tooltip;
+            return this;
+        }
+
+        public enum ClickAction {
+            OPEN_URL,
+            RUN_COMMAND,
+            SUGGEST
+        }
+    }
+
+    public static class Builder {
+
+        private String ident;
+
+        private List<String> lines = new ArrayList<>();
+        private List<Extra> extras = new ArrayList<>();
+
+        public Builder(String ident) {
+            this.ident = ident;
+        }
+
+        public Builder addLine(String line) {
+            lines.add(line);
+            return this;
+        }
+
+        public Builder addExtra(Extra extra) {
+            extras.add(extra);
+            return this;
+        }
+
+        public Message build() {
+            return new Message(ident, lines, extras);
+        }
+
     }
 }

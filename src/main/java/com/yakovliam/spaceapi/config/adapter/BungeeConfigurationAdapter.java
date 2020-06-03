@@ -2,13 +2,16 @@ package com.yakovliam.spaceapi.config.adapter;
 
 import com.yakovliam.spaceapi.config.BungeeConfig;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-public class BungeeConfigurateAdapter implements ConfigurationAdapter {
+public class BungeeConfigurationAdapter implements ConfigurationAdapter {
 
     private BungeeConfig bungeeConfig;
 
-    public BungeeConfigurateAdapter(BungeeConfig bungeeConfig) {
+    public BungeeConfigurationAdapter(BungeeConfig bungeeConfig) {
         this.bungeeConfig = bungeeConfig;
     }
 
@@ -34,7 +37,7 @@ public class BungeeConfigurateAdapter implements ConfigurationAdapter {
 
     @Override
     public List<String> getStringList(String path, List<String> def) {
-        return Optional.of(bungeeConfig.getConfig().getStringList(path)).orElse(def);
+        return bungeeConfig.getConfig().getStringList(path);
     }
 
     @Override

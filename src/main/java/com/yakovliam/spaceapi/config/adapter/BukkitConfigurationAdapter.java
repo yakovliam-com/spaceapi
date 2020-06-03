@@ -1,19 +1,16 @@
 package com.yakovliam.spaceapi.config.adapter;
 
 import com.yakovliam.spaceapi.config.BukkitConfig;
-import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class BukkitConfigurateAdaption implements ConfigurationAdapter {
+public class BukkitConfigurationAdapter implements ConfigurationAdapter {
 
     private BukkitConfig bukkitConfig;
-    private Plugin plugin;
 
-    public BukkitConfigurateAdaption(Plugin plugin, BukkitConfig bukkitConfig) {
-        this.plugin = plugin;
+    public BukkitConfigurationAdapter(BukkitConfig bukkitConfig) {
         this.bukkitConfig = bukkitConfig;
     }
 
@@ -39,12 +36,12 @@ public class BukkitConfigurateAdaption implements ConfigurationAdapter {
 
     @Override
     public List<String> getStringList(String path, List<String> def) {
-        return Optional.of(bukkitConfig.getConfig().getStringList(path)).orElse(def);
+        return Optional.ofNullable(bukkitConfig.getConfig().getStringList(path)).orElse(def);
     }
 
     @Override
     public Set<String> getKeys(String path, Set<String> def) {
-        return Optional.of(bukkitConfig.getConfig().getConfigurationSection(path).getKeys(false)).orElse(def);
+        return Optional.ofNullable(bukkitConfig.getConfig().getConfigurationSection(path).getKeys(false)).orElse(def);
     }
 
     @Override
