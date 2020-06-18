@@ -1,6 +1,7 @@
 package com.yakovliam.spaceapi.text;
 
 import com.google.common.base.Joiner;
+import com.yakovliam.spaceapi.abstraction.server.Server;
 import com.yakovliam.spaceapi.command.SpaceCommandSender;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
@@ -9,6 +10,7 @@ import net.md_5.bungee.api.chat.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Message {
 
@@ -32,7 +34,7 @@ public class Message {
         msg(Collections.singletonList(sender), replacers);
     }
 
-    public void msg(Collection<SpaceCommandSender> senders, String... replacers) {
+    public void msg(Iterable<SpaceCommandSender> senders, String... replacers) {
         for (BaseComponent[] c : toBaseComponents(replacers)) {
             for (SpaceCommandSender sender : senders) {
                 if (!sender.isPlayer()) {
@@ -42,6 +44,10 @@ public class Message {
                 }
             }
         }
+    }
+
+    public void broadcast(String... replacers) {
+        msg(Server.get().getOnlinePlayers().collect(Collectors.toList()), replacers);
     }
 
     public static Builder builder(String ident) {

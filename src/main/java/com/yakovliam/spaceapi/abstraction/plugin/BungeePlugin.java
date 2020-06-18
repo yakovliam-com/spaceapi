@@ -1,15 +1,14 @@
-package com.yakovliam.spaceapi.abstraction;
+package com.yakovliam.spaceapi.abstraction.plugin;
 
 import com.yakovliam.spaceapi.command.BungeeSpaceCommandSender;
 import com.yakovliam.spaceapi.command.Permissible;
 import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.Plugin;
 
-public class BungeePlugin extends AbstractPlugin {
+public class BungeePlugin extends Plugin {
 
-    private final Plugin plugin;
+    private final net.md_5.bungee.api.plugin.Plugin plugin;
 
-    public BungeePlugin(Plugin plugin) {
+    public BungeePlugin(net.md_5.bungee.api.plugin.Plugin plugin) {
         this.plugin = plugin;
     }
 

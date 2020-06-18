@@ -1,7 +1,7 @@
 package com.yakovliam.spaceapi.command;
 
 import com.google.common.base.Joiner;
-import com.yakovliam.spaceapi.abstraction.AbstractPlugin;
+import com.yakovliam.spaceapi.abstraction.plugin.Plugin;
 import com.yakovliam.spaceapi.util.Utility;
 
 import java.util.*;
@@ -13,29 +13,29 @@ import static com.yakovliam.spaceapi.text.LegacyMessage.Global.PLAYERS_ONLY;
 public abstract class Command {
 
     private Set<Command> subCommands = new HashSet<>();
-    private AbstractPlugin plugin;
+    private Plugin plugin;
     private String name;
     private String description;
     private String usageMessage;
     private List<String> aliases;
 
-    public Command(AbstractPlugin plugin, String name) {
+    public Command(Plugin plugin, String name) {
         this(plugin, name, "No description available.", "N/A", Collections.emptyList());
     }
 
-    public Command(AbstractPlugin plugin, String name, String description) {
+    public Command(Plugin plugin, String name, String description) {
         this(plugin, name, description, "N/A", Collections.emptyList());
     }
 
-    public Command(AbstractPlugin plugin, String name, String description, List<String> aliases) {
+    public Command(Plugin plugin, String name, String description, List<String> aliases) {
         this(plugin, name, description, "N/A", aliases);
     }
 
-    public Command(AbstractPlugin plugin, String name, String description, String usage) {
+    public Command(Plugin plugin, String name, String description, String usage) {
         this(plugin, name, description, usage, Collections.emptyList());
     }
 
-    public Command(AbstractPlugin plugin, String name, String description, String usageMessage, List<String> aliases) {
+    public Command(Plugin plugin, String name, String description, String usageMessage, List<String> aliases) {
         this.plugin = plugin;
         this.name = name.toLowerCase();
         this.description = description;
@@ -45,7 +45,7 @@ public abstract class Command {
         if (this.getClass().getDeclaredAnnotation(SubCommand.class) == null) plugin.registerCommand(this);
     }
 
-    public AbstractPlugin getPlugin() {
+    public Plugin getPlugin() {
         return plugin;
     }
 
