@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.lang.reflect.Field;
 
 public class BukkitPlugin extends AbstractPlugin {
@@ -29,6 +30,11 @@ public class BukkitPlugin extends AbstractPlugin {
         }
 
         commandMap.register(command.getName(), new BukkitCommand(command));
+    }
+
+    @Override
+    public File getDataFolder() {
+        return plugin.getDataFolder();
     }
 
     public static class BukkitCommand extends org.bukkit.command.defaults.BukkitCommand {

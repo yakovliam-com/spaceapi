@@ -5,6 +5,8 @@ import com.yakovliam.spaceapi.command.Permissible;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 
+import java.io.File;
+
 public class BungeePlugin extends AbstractPlugin {
 
     private final Plugin plugin;
@@ -23,6 +25,11 @@ public class BungeePlugin extends AbstractPlugin {
             permission = null;
         }
         plugin.getProxy().getPluginManager().registerCommand(plugin, new BungeeCommand(command, permission));
+    }
+
+    @Override
+    public File getDataFolder() {
+        return plugin.getDataFolder();
     }
 
     public static class BungeeCommand extends Command {

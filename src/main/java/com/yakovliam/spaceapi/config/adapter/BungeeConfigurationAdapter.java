@@ -16,11 +16,6 @@ public class BungeeConfigurationAdapter implements ConfigurationAdapter {
     }
 
     @Override
-    public void reload() {
-        bungeeConfig.load();
-    }
-
-    @Override
     public String getString(String path, String def) {
         return bungeeConfig.getConfig().getString(path, def);
     }

@@ -5,8 +5,6 @@ import java.util.Set;
 
 public interface ConfigurationAdapter {
 
-    void reload();
-
     String getString(String path, String def);
 
     int getInteger(String path, int def);
@@ -20,4 +18,8 @@ public interface ConfigurationAdapter {
     Double getDouble(String path, double def);
 
     Long getLong(String path, Long def);
+
+    default PathConfigurationAdapter getSection(String path) {
+        return new PathConfigurationAdapter(this, path);
+    }
 }

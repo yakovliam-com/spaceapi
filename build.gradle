@@ -38,6 +38,13 @@ dependencies {
 
     testCompileOnly 'org.projectlombok:lombok:1.18.12'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+    // snakeYAML
+    // https://mvnrepository.com/artifact/org.yaml/snakeyaml
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
+
+    // google gson
+    implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 //import org.apache.tools.ant.filters.ReplaceTokens

@@ -15,11 +15,6 @@ public class BukkitConfigurationAdapter implements ConfigurationAdapter {
     }
 
     @Override
-    public void reload() {
-        bukkitConfig.load();
-    }
-
-    @Override
     public String getString(String path, String def) {
         return bukkitConfig.getConfig().getString(path, def);
     }
