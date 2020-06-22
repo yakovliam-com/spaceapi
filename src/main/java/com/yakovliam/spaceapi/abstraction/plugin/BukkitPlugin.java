@@ -1,4 +1,4 @@
-package com.yakovliam.spaceapi.abstraction;
+package com.yakovliam.spaceapi.abstraction.plugin;
 
 import com.yakovliam.spaceapi.command.BukkitSpaceCommandSender;
 import org.bukkit.Bukkit;
@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.lang.reflect.Field;
 
-public class BukkitPlugin extends AbstractPlugin {
+public class BukkitPlugin extends Plugin {
 
     private final JavaPlugin plugin;
 

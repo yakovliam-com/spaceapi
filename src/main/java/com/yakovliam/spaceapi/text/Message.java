@@ -1,8 +1,8 @@
 package com.yakovliam.spaceapi.text;
 
 import com.google.common.base.Joiner;
+import com.yakovliam.spaceapi.abstraction.server.Server;
 import com.yakovliam.spaceapi.command.SpaceCommandSender;
-import com.yakovliam.spaceapi.confignew.impl.Configuration;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
@@ -10,20 +10,9 @@ import net.md_5.bungee.api.chat.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Message {
-
-    /**
-     * help-message:
-     * text:
-     * - "&bPlease click $&ehere$ &bto do &2/spawn&b."
-     * extras:
-     * 1:
-     * action: "RUN_COMMAND"
-     * content: "/spawn"
-     * tooltip:
-     * - "&cClick here!"
-     */
 
     private static final char DELIMITER = '$';
 
@@ -45,7 +34,7 @@ public class Message {
         msg(Collections.singletonList(sender), replacers);
     }
 
-    public void msg(Collection<SpaceCommandSender> senders, String... replacers) {
+    public void msg(Iterable<SpaceCommandSender> senders, String... replacers) {
         for (BaseComponent[] c : toBaseComponents(replacers)) {
             for (SpaceCommandSender sender : senders) {
                 if (!sender.isPlayer()) {
@@ -57,71 +46,8 @@ public class Message {
         }
     }
 
-    public static Builder fromConfigurationSection(Configuration section, String ident) {
-        // create new builder
-        Builder builder = Message.builder(ident);
-
-        // initialize empty list
-        List<String> text = Collections.emptyList();
-
-        // get text lines
-        text = section.getStringList("text", text);
-
-        // set text in builder
-        text.forEach(builder::addLine);
-
-        // get extras section
-        Configuration extrasSection = section.getSection("extras");
-        // get list of keys
-        Collection<String> extraKeys = extrasSection.getKeys();
-
-        // if no keys, return builder as-is
-        if (extraKeys.size() <= 1) return builder;
-
-        // initialize new extras list
-        List<Extra> extras = new ArrayList<>();
-
-        // loop through keys and create extras
-        extraKeys.forEach(key -> {
-            // get section from key
-            Configuration keySection = extrasSection.getSection(key);
-
-            // get action
-            String action = keySection.getString("action", null);
-
-            // get content
-            String content = keySection.getString("content", null);
-
-            // (if applicable) get tooltip
-            List<String> tooltip = keySection.getStringList("tooltip", Collections.emptyList());
-
-            // create new extra
-            Extra extra = new Extra();
-
-            // if there's an action, add it
-            if (action != null && content != null) {
-                Extra.ClickAction actionType;
-                try {
-                    actionType = Extra.ClickAction.valueOf(action.toUpperCase());
-
-                    // set action
-                    extra.withAction(actionType, content);
-                } catch (Exception ignored) {
-                }
-            }
-
-            // add tooltip (if not empty)
-            if (!tooltip.isEmpty()) extra.withTooltip(tooltip);
-
-            // add extra to extras list
-            extras.add(extra);
-        });
-
-        // add extras to builder
-        extras.forEach(builder::addExtra);
-
-        // return builder
-        return builder;
+    public void broadcast(String... replacers) {
+        msg(Server.get().getOnlinePlayers().collect(Collectors.toList()), replacers);
     }
 
     public static Builder builder(String ident) {
@@ -156,12 +82,6 @@ public class Message {
 
                     i2 = text.indexOf(DELIMITER, i1 + 1);
                     if (i2 != -1) {
-                        // checks if you are escaping the delimiter (if the delim is "$" then doing "$$" will just display "$" instead of recognizing as an 'extra')
-                        if (i2 == i1 + 1) {
-                            cb.appendLegacy(String.valueOf(DELIMITER));
-                            continue;
-                        }
-
                         BaseComponent[] extras = TextComponent.fromLegacyText(text.substring(i1 + 1, i2));
                         ComponentBuilder evt = new ComponentBuilder("").append(new TextComponent(extras));
 

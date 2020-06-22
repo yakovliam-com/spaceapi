@@ -1,17 +1,14 @@
-package com.yakovliam.spaceapi.abstraction;
+package com.yakovliam.spaceapi.abstraction.plugin;
 
 import com.yakovliam.spaceapi.command.BungeeSpaceCommandSender;
 import com.yakovliam.spaceapi.command.Permissible;
 import net.md_5.bungee.api.plugin.Command;
-import net.md_5.bungee.api.plugin.Plugin;
 
-import java.io.File;
+public class BungeePlugin extends Plugin {
 
-public class BungeePlugin extends AbstractPlugin {
+    private final net.md_5.bungee.api.plugin.Plugin plugin;
 
-    private final Plugin plugin;
-
-    public BungeePlugin(Plugin plugin) {
+    public BungeePlugin(net.md_5.bungee.api.plugin.Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -25,11 +22,6 @@ public class BungeePlugin extends AbstractPlugin {
             permission = null;
         }
         plugin.getProxy().getPluginManager().registerCommand(plugin, new BungeeCommand(command, permission));
-    }
-
-    @Override
-    public File getDataFolder() {
-        return plugin.getDataFolder();
     }
 
     public static class BungeeCommand extends Command {
