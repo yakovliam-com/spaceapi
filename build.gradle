@@ -47,10 +47,3 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 }
 
-//import org.apache.tools.ant.filters.ReplaceTokens
-//
-//processResources {
-//    from(sourceSets.main.resources.srcDirs) {
-//        filter ReplaceTokens, tokens: [version: version]
-//    }
-//}

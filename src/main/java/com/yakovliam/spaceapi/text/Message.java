@@ -3,6 +3,7 @@ package com.yakovliam.spaceapi.text;
 import com.google.common.base.Joiner;
 import com.yakovliam.spaceapi.abstraction.server.Server;
 import com.yakovliam.spaceapi.command.SpaceCommandSender;
+import com.yakovliam.spaceapi.confignew.impl.Configuration;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
@@ -46,6 +47,73 @@ public class Message {
         }
     }
 
+    public static Builder fromConfigurationSection(Configuration section, String ident) {
+        // create new builder
+        Builder builder = Message.builder(ident);
+
+        // initialize empty list
+        List<String> text = Collections.emptyList();
+
+        // get text lines
+        text = section.getStringList("text", text);
+
+        // set text in builder
+        text.forEach(builder::addLine);
+
+        // get extras section
+        Configuration extrasSection = section.getSection("extras");
+        // get list of keys
+        Collection<String> extraKeys = extrasSection.getKeys();
+
+        // if no keys, return builder as-is
+        if (extraKeys.size() <= 0) return builder;
+
+        // initialize new extras list
+        List<Extra> extras = new ArrayList<>();
+
+        // loop through keys and create extras
+        extraKeys.forEach(key -> {
+            // get section from key
+            Configuration keySection = extrasSection.getSection(key);
+
+            // get action
+            String action = keySection.getString("action", null);
+
+            // get content
+            String content = keySection.getString("content", null);
+
+            // (if applicable) get tooltip
+            List<String> tooltip = keySection.getStringList("tooltip", Collections.emptyList());
+
+            // create new extra
+            Extra extra = new Extra();
+
+            // if there's an action, add it
+            if (action != null && content != null) {
+                Extra.ClickAction actionType;
+                try {
+                    actionType = Extra.ClickAction.valueOf(action.toUpperCase());
+
+                    // set action
+                    extra.withAction(actionType, content);
+                } catch (Exception ignored) {
+                }
+            }
+
+            // add tooltip (if not empty)
+            if (!tooltip.isEmpty()) extra.withTooltip(tooltip);
+
+            // add extra to extras list
+            extras.add(extra);
+        });
+
+        // add extras to builder
+        extras.forEach(builder::addExtra);
+
+        // return builder
+        return builder;
+    }
+
     public void broadcast(String... replacers) {
         msg(Server.get().getOnlinePlayers().collect(Collectors.toList()), replacers);
     }
@@ -78,14 +146,21 @@ public class Message {
             do {
                 i1 = text.indexOf(DELIMITER, i2 + 1);
                 if (i1 != -1) {
-                    cb.appendLegacy(text.substring(i2 + 1, i1));
+                    cb.append(TextComponent.fromLegacyText(text.substring(i2 + 1, i1)));
 
                     i2 = text.indexOf(DELIMITER, i1 + 1);
                     if (i2 != -1) {
                         BaseComponent[] extras = TextComponent.fromLegacyText(text.substring(i1 + 1, i2));
                         ComponentBuilder evt = new ComponentBuilder("").append(new TextComponent(extras));
 
-                        Extra extra = this.extras.get(count++);
+                        Extra extra;
+
+                        if (this.extras.size() <= count) {
+                            extra = new Extra();
+                        } else {
+                            extra = this.extras.get(count++);
+                        }
+
                         if (extra.tooltip != null) {
                             evt.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                     TextComponent.fromLegacyText(Joiner.on("\n").join(extra.tooltip.stream()
@@ -114,8 +189,8 @@ public class Message {
                 }
             } while (i1 != -1 && i2 != -1);
 
-            if (i1 == -1 && i2 > 0) {
-                cb.appendLegacy(text.substring(i2 + 1));
+            if (i1 == -1) {
+                cb.append(TextComponent.fromLegacyText(text.substring(i2 + 1)));
             }
 
             components.add(cb.create());

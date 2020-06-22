@@ -1,6 +1,6 @@
 package com.yakovliam.spaceapi.confignew.obj;
 
-import com.yakovliam.spaceapi.abstraction.AbstractPlugin;
+import com.yakovliam.spaceapi.abstraction.plugin.Plugin;
 import com.yakovliam.spaceapi.confignew.impl.Configuration;
 import com.yakovliam.spaceapi.confignew.impl.ConfigurationProvider;
 import com.yakovliam.spaceapi.confignew.impl.YamlConfiguration;
@@ -36,7 +36,7 @@ public class Config  {
     /**
      * The contextual plugin
      */
-    private AbstractPlugin plugin;
+    private Plugin plugin;
 
     /**
      * Initializes new config; directory defaults to {Plugin#getDataFolder()}
@@ -44,7 +44,7 @@ public class Config  {
      * @param plugin The contextual plugin
      * @param fileName The name of the config as it appears in the jar's resources directory
      */
-    public Config(AbstractPlugin plugin, String fileName) {
+    public Config(Plugin plugin, String fileName) {
         // call other constructor with dataFolder as directory
         this(plugin, plugin.getDataFolder(), fileName);
     }
@@ -56,7 +56,7 @@ public class Config  {
      * @param fileName The name of the config as it appears in the jar's resources directory
      * @param directory The custom directory to put the target config in (external, usually in the plugins/PluginName folder)
      */
-    public Config(AbstractPlugin plugin, File directory, String fileName) {
+    public Config(Plugin plugin, File directory, String fileName) {
         // init
         this.plugin = plugin;
         this.directory = directory;
