@@ -1,4 +1,4 @@
-package com.yakovliam.spaceapi.confignew.impl;
+package com.yakovliam.spaceapi.config.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;

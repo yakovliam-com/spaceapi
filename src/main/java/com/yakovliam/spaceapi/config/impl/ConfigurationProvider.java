@@ -1,4 +1,4 @@
-package com.yakovliam.spaceapi.confignew.impl;
+package com.yakovliam.spaceapi.config.impl;
 
 import java.io.File;
 import java.io.IOException;

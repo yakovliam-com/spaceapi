@@ -1,6 +1,6 @@
-package com.yakovliam.spaceapi.confignew.keys;
+package com.yakovliam.spaceapi.config.keys;
 
-import com.yakovliam.spaceapi.confignew.impl.Configuration;
+import com.yakovliam.spaceapi.config.impl.Configuration;
 
 import java.util.List;
 

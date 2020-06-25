@@ -1,4 +1,4 @@
-package com.yakovliam.spaceapi.confignew.impl;
+package com.yakovliam.spaceapi.config.impl;
 
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;

@@ -3,7 +3,7 @@ package com.yakovliam.spaceapi.text;
 import com.google.common.base.Joiner;
 import com.yakovliam.spaceapi.abstraction.server.Server;
 import com.yakovliam.spaceapi.command.SpaceCommandSender;
-import com.yakovliam.spaceapi.confignew.impl.Configuration;
+import com.yakovliam.spaceapi.config.impl.Configuration;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;

@@ -1,9 +1,9 @@
-package com.yakovliam.spaceapi.confignew.obj;
+package com.yakovliam.spaceapi.config.obj;
 
 import com.yakovliam.spaceapi.abstraction.plugin.Plugin;
-import com.yakovliam.spaceapi.confignew.impl.Configuration;
-import com.yakovliam.spaceapi.confignew.impl.ConfigurationProvider;
-import com.yakovliam.spaceapi.confignew.impl.YamlConfiguration;
+import com.yakovliam.spaceapi.config.impl.Configuration;
+import com.yakovliam.spaceapi.config.impl.ConfigurationProvider;
+import com.yakovliam.spaceapi.config.impl.YamlConfiguration;
 
 import java.io.*;
 import java.net.URL;
