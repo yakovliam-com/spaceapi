@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.yakovliam.spaceapi.abstraction.server.Server;
 import com.yakovliam.spaceapi.command.SpaceCommandSender;
 import com.yakovliam.spaceapi.config.impl.Configuration;
+import com.yakovliam.spaceapi.text.mini.MiniMessageParser;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
@@ -20,11 +21,13 @@ public class Message {
     private final String ident;
     private final List<String> lines;
     private final List<Extra> extras;
+    private final List<String> richLines;
 
-    private Message(String ident, List<String> lines, List<Extra> extras) {
+    private Message(String ident, List<String> lines, List<Extra> extras, List<String> richLines) {
         this.ident = ident;
         this.lines = lines;
         this.extras = extras;
+        this.richLines = richLines;
     }
 
     public String getIdent() {
@@ -50,6 +53,13 @@ public class Message {
     public static Builder fromConfigurationSection(Configuration section, String ident) {
         // create new builder
         Builder builder = Message.builder(ident);
+
+        // if rich exists, return builder as-is but with rich
+        List<String> rich = section.getStringList("rich", Collections.emptyList());
+        if (rich != null && !rich.isEmpty()) {
+            // return builder with rich text
+            return builder.setRichLines(rich);
+        }
 
         // initialize empty list
         List<String> text = Collections.emptyList();
@@ -123,8 +133,15 @@ public class Message {
     }
 
     public List<BaseComponent[]> toBaseComponents(String... replacers) {
-
         List<BaseComponent[]> components = new ArrayList<>();
+
+        // if rich text is present
+        if (richLines != null && !richLines.isEmpty()) {
+            // add the parsed lines to the components list
+            components.addAll(richLines.stream().map(line -> MiniMessageParser.parseFormat(line, replacers)).collect(Collectors.toList()));
+            // return as-is
+            return components;
+        }
 
         int count = 0;
         for (String text : lines) {
@@ -234,10 +251,11 @@ public class Message {
 
     public static class Builder {
 
-        private String ident;
+        private final String ident;
 
-        private List<String> lines = new ArrayList<>();
-        private List<Extra> extras = new ArrayList<>();
+        private final List<String> lines = new ArrayList<>();
+        private final List<Extra> extras = new ArrayList<>();
+        private List<String> richLines;
 
         public Builder(String ident) {
             this.ident = ident;
@@ -253,9 +271,13 @@ public class Message {
             return this;
         }
 
-        public Message build() {
-            return new Message(ident, lines, extras);
+        public Builder setRichLines(List<String> richLines) {
+            this.richLines = richLines;
+            return this;
         }
 
+        public Message build() {
+            return new Message(ident, lines, extras, richLines);
+        }
     }
 }

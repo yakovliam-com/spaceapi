@@ -13,28 +13,42 @@ public final class Configuration {
     private static final char SEPARATOR = '.';
     final Map<String, Object> self;
     private final Configuration defaults;
+    private Configuration parent;
 
     public Configuration() {
         this(null);
     }
 
-    public Configuration(Configuration defaults) {
-        this(new LinkedHashMap<String, Object>(), defaults);
+    public Configuration(Configuration defaults, Configuration parent) {
+        this(new LinkedHashMap<String, Object>(), defaults, parent);
     }
 
-    Configuration(Map<?, ?> map, Configuration defaults) {
+    public Configuration(Configuration defaults) {
+        this(new LinkedHashMap<String, Object>(), defaults, null);
+    }
+
+    public Configuration(Map<?, ?> map, Configuration defaults) {
+        this(map, defaults, null);
+    }
+
+    Configuration(Map<?, ?> map, Configuration defaults, Configuration parent) {
         this.self = new LinkedHashMap<>();
         this.defaults = defaults;
+        this.parent = parent;
 
         for (Map.Entry<?, ?> entry : map.entrySet()) {
             String key = (entry.getKey() == null) ? "null" : entry.getKey().toString();
 
             if (entry.getValue() instanceof Map) {
-                this.self.put(key, new Configuration((Map) entry.getValue(), (defaults == null) ? null : defaults.getSection(key)));
+                this.self.put(key, new Configuration((Map) entry.getValue(), (defaults == null) ? null : defaults.getSection(key), this.parent));
             } else {
                 this.self.put(key, entry.getValue());
             }
         }
+    }
+
+    private void setParent(Configuration parent) {
+        this.parent = parent;
     }
 
     private Configuration getSectionFor(String path) {
@@ -90,7 +104,7 @@ public final class Configuration {
 
     public void set(String path, Object value) {
         if (value instanceof Map) {
-            value = new Configuration((Map) value, (defaults == null) ? null : defaults.getSection(path));
+            value = new Configuration((Map) value, (defaults == null) ? null : defaults.getSection(path), this.parent);
         }
 
         Configuration section = getSectionFor(path);
@@ -108,7 +122,12 @@ public final class Configuration {
     /*------------------------------------------------------------------------*/
     public Configuration getSection(String path) {
         Object def = getDefault(path);
-        return (Configuration) get(path, (def instanceof Configuration) ? def : new Configuration((defaults == null) ? null : defaults.getSection(path)));
+        // get configuration
+        Configuration configuration = (Configuration) get(path, (def instanceof Configuration) ? def : new Configuration((defaults == null) ? null : defaults.getSection(path)));
+        // set parent
+        configuration.setParent(this);
+        // return
+        return configuration;
     }
 
     /**
