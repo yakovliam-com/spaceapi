@@ -56,11 +56,11 @@ public final class Configuration {
         this.name = name;
     }
 
-    private Configuration getParent(){
+    public Configuration getParent(){
         return this.parent;
     }
 
-    private String getName() {
+    public String getName() {
         return this.name;
     }
 
