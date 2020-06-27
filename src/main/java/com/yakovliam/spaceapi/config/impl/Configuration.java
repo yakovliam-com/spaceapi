@@ -14,6 +14,7 @@ public final class Configuration {
     final Map<String, Object> self;
     private final Configuration defaults;
     private Configuration parent;
+    private String name;
 
     public Configuration() {
         this(null);
@@ -49,6 +50,10 @@ public final class Configuration {
 
     private void setParent(Configuration parent) {
         this.parent = parent;
+    }
+
+    private void setName(String name) {
+        this.name = name;
     }
 
     private Configuration getSectionFor(String path) {
@@ -126,6 +131,8 @@ public final class Configuration {
         Configuration configuration = (Configuration) get(path, (def instanceof Configuration) ? def : new Configuration((defaults == null) ? null : defaults.getSection(path)));
         // set parent
         configuration.setParent(this);
+        // set name
+        configuration.setName(path.contains(".") ? path.substring(path.lastIndexOf(".")) : path);
         // return
         return configuration;
     }
