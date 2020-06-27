@@ -56,6 +56,14 @@ public final class Configuration {
         this.name = name;
     }
 
+    private Configuration getParent(){
+        return this.parent;
+    }
+
+    private String getName() {
+        return this.name;
+    }
+
     private Configuration getSectionFor(String path) {
         int index = path.indexOf(SEPARATOR);
         if (index == -1) {
