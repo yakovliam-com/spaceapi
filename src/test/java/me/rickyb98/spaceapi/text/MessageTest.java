@@ -1,7 +1,7 @@
 package me.rickyb98.spaceapi.text;
 
-import com.yakovliam.spaceapi.text.FakeCommandSender;
-import com.yakovliam.spaceapi.text.Message;
+import dev.spaceseries.api.text.FakeCommandSender;
+import dev.spaceseries.api.text.Message;
 import org.junit.Test;
 
 import java.util.Arrays;
