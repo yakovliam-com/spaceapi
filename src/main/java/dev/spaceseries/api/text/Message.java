@@ -5,6 +5,7 @@ import dev.spaceseries.api.abstraction.server.Server;
 import dev.spaceseries.api.command.SpaceCommandSender;
 import dev.spaceseries.api.config.impl.Configuration;
 import dev.spaceseries.api.text.mini.MiniMessageParser;
+import dev.spaceseries.api.util.TextComponentUtil;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
@@ -163,11 +164,11 @@ public class Message {
             do {
                 i1 = text.indexOf(DELIMITER, i2 + 1);
                 if (i1 != -1) {
-                    cb.append(TextComponent.fromLegacyText(text.substring(i2 + 1, i1)));
+                    cb.append(TextComponentUtil.fromLegacyText(text.substring(i2 + 1, i1)));
 
                     i2 = text.indexOf(DELIMITER, i1 + 1);
                     if (i2 != -1) {
-                        BaseComponent[] extras = TextComponent.fromLegacyText(text.substring(i1 + 1, i2));
+                        BaseComponent[] extras = TextComponentUtil.fromLegacyText(text.substring(i1 + 1, i2));
                         ComponentBuilder evt = new ComponentBuilder("").append(new TextComponent(extras));
 
                         Extra extra;
@@ -180,7 +181,7 @@ public class Message {
 
                         if (extra.tooltip != null) {
                             evt.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                    TextComponent.fromLegacyText(Joiner.on("\n").join(extra.tooltip.stream()
+                                    TextComponentUtil.fromLegacyText(Joiner.on("\n").join(extra.tooltip.stream()
                                             .map(s -> ChatColor.translateAlternateColorCodes('&', s))
                                             .iterator()))
                             ));
@@ -207,7 +208,7 @@ public class Message {
             } while (i1 != -1 && i2 != -1);
 
             if (i1 == -1) {
-                cb.append(TextComponent.fromLegacyText(text.substring(i2 + 1)));
+                cb.append(TextComponentUtil.fromLegacyText(text.substring(i2 + 1)));
             }
 
             components.add(cb.create());

@@ -1,0 +1,2 @@
+start:
+  command-to-run-on-start: "/do a thing"
