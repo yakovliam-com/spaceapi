@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class ColorUtil {
 
     private static final Pattern URL = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
-    public static final Pattern HEX_PATTERN = Pattern.compile("&\\(([A-Fa-f0-9]{6})\\)");
+    public static final Pattern HEX_PATTERN = Pattern.compile("&\\(#([A-Fa-f0-9]{6})\\)");
     public static final char COLOR_CHAR = ChatColor.COLOR_CHAR;
 
     /**
@@ -157,7 +157,7 @@ public class ColorUtil {
         StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
         while (matcher.find()) {
             String group = matcher.group(1);
-            matcher.appendReplacement(buffer, ChatColor.of("#" + group.replace("#", "")).toString());
+            matcher.appendReplacement(buffer, ChatColor.of("#" + group).toString());
         }
         return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
     }
