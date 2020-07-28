@@ -1,5 +1,6 @@
 package dev.spaceseries.api.util;
 
+import com.google.common.base.Preconditions;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -7,19 +8,22 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class TextComponentUtil {
+public class ColorUtil {
 
-    private static final Pattern url = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
+    private static final Pattern URL = Pattern.compile("^(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
+    public static final Pattern HEX_PATTERN = Pattern.compile("&\\(([A-Fa-f0-9]{6})\\)");
+    public static final char COLOR_CHAR = ChatColor.COLOR_CHAR;
 
     /**
      * Converts the old formatting system that used
      * {@link ChatColor#COLOR_CHAR} into the new json based
      * system.
      *
-     * @param message      the text to convert
+     * @param message the text to convert
      * @return the components needed to print the message to the client
      */
     public static BaseComponent[] fromLegacyText(String message) {
@@ -40,7 +44,7 @@ public class TextComponentUtil {
         List<BaseComponent> components = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
         TextComponent component = new TextComponent();
-        Matcher matcher = url.matcher(message);
+        Matcher matcher = URL.matcher(message);
 
         for (int i = 0; i < message.length(); i++) {
             char c = message.charAt(i);
@@ -140,5 +144,21 @@ public class TextComponentUtil {
         component.setStrikethrough(false);
         component.setObfuscated(false);
         component.setBold(false);
+    }
+
+    /**
+     * Translates a message's chatColors & hex colors
+     *
+     * @param message The message
+     * @return The translated message
+     */
+    public static String translateFromAmpersand(String message) {
+        Matcher matcher = HEX_PATTERN.matcher(message);
+        StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
+        while (matcher.find()) {
+            String group = matcher.group(1);
+            matcher.appendReplacement(buffer, ChatColor.of("#" + group.replace("#", "")).toString());
+        }
+        return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
     }
 }
