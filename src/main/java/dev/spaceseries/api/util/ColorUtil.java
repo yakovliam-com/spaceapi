@@ -153,12 +153,16 @@ public class ColorUtil {
      * @return The translated message
      */
     public static String translateFromAmpersand(String message) {
-        Matcher matcher = HEX_PATTERN.matcher(message);
-        StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
-        while (matcher.find()) {
-            String group = matcher.group(1);
-            matcher.appendReplacement(buffer, ChatColor.of("#" + group).toString());
+        try {
+            Matcher matcher = HEX_PATTERN.matcher(message);
+            StringBuffer buffer = new StringBuffer(message.length() + 4 * 8);
+            while (matcher.find()) {
+                String group = matcher.group(1);
+                matcher.appendReplacement(buffer, ChatColor.of("#" + group).toString());
+            }
+            return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
+        } catch (NoSuchMethodError e) {
+            return ChatColor.translateAlternateColorCodes('&', message);
         }
-        return ChatColor.translateAlternateColorCodes('&', matcher.appendTail(buffer).toString());
     }
 }
