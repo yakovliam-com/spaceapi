@@ -4,10 +4,9 @@ import com.google.common.base.Joiner;
 import dev.spaceseries.api.abstraction.server.Server;
 import dev.spaceseries.api.command.SpaceCommandSender;
 import dev.spaceseries.api.config.impl.Configuration;
-import dev.spaceseries.api.text.mini.MiniMessageParser;
 import dev.spaceseries.api.util.ColorUtil;
 import lombok.Getter;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.md_5.bungee.api.chat.*;
 
 import java.util.*;
@@ -136,17 +135,17 @@ public class Message {
     public List<BaseComponent[]> toBaseComponents(String... replacers) {
         List<BaseComponent[]> components = new ArrayList<>();
 
-        // if rich text is present
-        if (richLines != null && !richLines.isEmpty()) {
-            // add the parsed lines to the components list
-            components.addAll(richLines.stream().map(line -> MiniMessageParser.parseFormat(line, replacers)).collect(Collectors.toList()));
-            // return as-is
-            return components;
-        }
+//        // if rich text is present
+//        if (richLines != null && !richLines.isEmpty()) {
+//            // add the parsed lines to the components list
+//            components.addAll(richLines.stream().map(line -> MiniMessage.get().parse(line, replacers)).collect(Collectors.toList()));
+//            // return as-is
+//            return components;
+//        }
 
         int count = 0;
         for (String text : lines) {
-            text = ChatColor.translateAlternateColorCodes('&', text);
+            text = ColorUtil.translateFromAmpersand(text);
 
             String left = null;
             for (String right : replacers) {
@@ -182,7 +181,7 @@ public class Message {
                         if (extra.tooltip != null) {
                             evt.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                     ColorUtil.fromLegacyText(Joiner.on("\n").join(extra.tooltip.stream()
-                                            .map(s -> ChatColor.translateAlternateColorCodes('&', s))
+                                            .map(ColorUtil::translateFromAmpersand)
                                             .iterator()))
                             ));
                         }
