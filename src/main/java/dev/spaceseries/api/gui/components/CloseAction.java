@@ -12,7 +12,7 @@ public class CloseAction {
      * The action executed when the gui is closed
      */
     @Getter
-    private BiConsumer<Player, InventoryCloseEvent> action;
+    private final BiConsumer<Player, InventoryCloseEvent> action;
 
     /**
      * Initializes a new close action

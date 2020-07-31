@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import dev.spaceseries.api.abstraction.server.Server;
 import dev.spaceseries.api.command.SpaceCommandSender;
 import dev.spaceseries.api.config.impl.Configuration;
+import dev.spaceseries.api.text.component.platform.BungeeCordComponentSerializer;
 import dev.spaceseries.api.util.ColorUtil;
 import lombok.Getter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -136,12 +137,12 @@ public class Message {
         List<BaseComponent[]> components = new ArrayList<>();
 
 //        // if rich text is present
-//        if (richLines != null && !richLines.isEmpty()) {
-//            // add the parsed lines to the components list
-//            components.addAll(richLines.stream().map(line -> MiniMessage.get().parse(line, replacers)).collect(Collectors.toList()));
-//            // return as-is
-//            return components;
-//        }
+        if (richLines != null && !richLines.isEmpty()) {
+            // add the parsed lines to the components list
+            components.addAll(richLines.stream().map(line -> BungeeCordComponentSerializer.get().serialize(MiniMessage.get().parse(line, replacers))).collect(Collectors.toList()));
+            // return as-is
+            return components;
+        }
 
         int count = 0;
         for (String text : lines) {

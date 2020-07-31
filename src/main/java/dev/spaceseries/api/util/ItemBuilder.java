@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * Easily create ItemStacks, without messing your hands.
  */
 public class ItemBuilder {
-    private ItemStack is;
+    private final ItemStack is;
 
     /**
      * Create a new ItemBuilder from scratch.
@@ -201,7 +201,7 @@ public class ItemBuilder {
 
             im.setOwner(owner);
             is.setItemMeta(im);
-        } catch (ClassCastException expected) {
+        } catch (ClassCastException ignored) {
         }
         return this;
     }

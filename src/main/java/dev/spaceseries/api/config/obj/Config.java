@@ -21,12 +21,12 @@ public class Config  {
     /**
      * The configuration file object
      */
-    private File configFile;
+    private final File configFile;
 
     /**
      * The directory that the config lives in (usually {Plugin#getDataFolder()}, but can be customized
      */
-    private File directory;
+    private final File directory;
 
     /**
      * The name of the config file (usually "config.yml")
@@ -36,7 +36,7 @@ public class Config  {
     /**
      * The contextual plugin
      */
-    private Plugin plugin;
+    private final Plugin plugin;
 
     /**
      * Initializes new config; directory defaults to {Plugin#getDataFolder()}

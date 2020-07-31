@@ -52,7 +52,6 @@ public class GuiListener implements Listener {
     @EventHandler
     public void onGuiClose(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
-        if (inventory == null) return;
         InventoryHolder holder = inventory.getHolder();
         if (!(holder instanceof GuiInventoryHolder)) return;
         if (!((GuiInventoryHolder) holder).getPlugin().equals(plugin)) return;

@@ -10,12 +10,12 @@ import java.util.stream.Collectors;
 
 public abstract class Command {
 
-    private Set<Command> subCommands = new HashSet<>();
-    private Plugin plugin;
-    private String name;
-    private String description;
-    private String usageMessage;
-    private List<String> aliases;
+    private final Set<Command> subCommands = new HashSet<>();
+    private final Plugin plugin;
+    private final String name;
+    private final String description;
+    private final String usageMessage;
+    private final List<String> aliases;
 
     public Command(Plugin plugin, String name) {
         this(plugin, name, "No description available.", "N/A", Collections.emptyList());

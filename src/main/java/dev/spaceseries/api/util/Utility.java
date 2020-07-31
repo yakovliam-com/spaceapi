@@ -72,7 +72,7 @@ public class Utility {
         int days = 0;
         int hours = 0;
         int minutes = 0;
-        Long secs;
+        long secs;
         while (seconds >= 24 * 60 * 60) {
             ++days;
             seconds -= 24 * 60 * 60;

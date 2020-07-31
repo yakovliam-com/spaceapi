@@ -13,6 +13,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -23,13 +24,13 @@ public class Gui {
     private final JavaPlugin plugin;
 
     @Getter
-    private int rows;
+    private final int rows;
     @Getter
-    private String displayName;
+    private final String displayName;
     @Getter
-    private Map<Integer, Button> buttons;
+    private final Map<Integer, Button> buttons;
     @Getter
-    private int slots;
+    private final int slots;
     @Getter
     private CloseAction closeAction;
 
@@ -60,19 +61,14 @@ public class Gui {
     }
 
     public void addItemInteraction(ItemStack item, BiConsumer<Player, InventoryClickEvent> action) {
-        int nextAvailable = 0;
-
-        for (int i = 0; i < this.slots; ++i) {
-            if (this.buttons.get(i) == null) {
-                nextAvailable = i;
-                break;
-            }
-        }
-
-        this.buttons.put(nextAvailable, new ActionButton(item, action));
+        putNextAvailableButton(new ActionButton(item, action));
     }
 
     public void addItemInteraction(Function<Player, ItemStack> item, BiConsumer<Player, InventoryClickEvent> action) {
+        putNextAvailableButton(new ActionButton(item, action));
+    }
+
+    private void putNextAvailableButton(ActionButton actionButton){
         int nextAvailable = 0;
 
         for (int i = 0; i < this.slots; ++i) {
@@ -82,7 +78,7 @@ public class Gui {
             }
         }
 
-        this.buttons.put(nextAvailable, new ActionButton(item, action));
+        this.buttons.put(nextAvailable, actionButton);
     }
 
 

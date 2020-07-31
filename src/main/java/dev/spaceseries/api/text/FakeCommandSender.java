@@ -15,7 +15,7 @@ public class FakeCommandSender extends SpaceCommandSender {
         this.real = real;
     }
 
-    private List<String> messages = new ArrayList<>();
+    private final List<String> messages = new ArrayList<>();
 
     public List<String> getMessages() {
         return messages;

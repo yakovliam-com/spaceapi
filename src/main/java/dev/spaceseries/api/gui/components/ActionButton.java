@@ -13,7 +13,7 @@ public class ActionButton extends Button {
         return action;
     }
 
-    private BiConsumer<Player, InventoryClickEvent> action;
+    private final BiConsumer<Player, InventoryClickEvent> action;
 
     public ActionButton(ItemStack item, BiConsumer<Player, InventoryClickEvent> action) {
         super(item);

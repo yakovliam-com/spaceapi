@@ -47,7 +47,7 @@ public class LegacyMessage {
 
     private final List<BaseComponent[]> componentsLines;
 
-    private static Map<String, LegacyMessage> messageMap = new HashMap<>();
+    private static final Map<String, LegacyMessage> messageMap = new HashMap<>();
 
     private LegacyMessage(String ident, List<BaseComponent[]> components) {
         this.ident = ident;
@@ -118,7 +118,7 @@ public class LegacyMessage {
 
         private final String ident;
         private final Boolean translateColorCodes;
-        private List<ComponentBuilder> cb = new ArrayList<>();
+        private final List<ComponentBuilder> cb = new ArrayList<>();
 
         private Builder(String ident) {
             this.ident = ident;

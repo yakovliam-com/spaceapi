@@ -6,7 +6,7 @@ import redis.clients.jedis.JedisPool;
 public class RedisDatabase implements Database<Jedis> {
 
     private final JedisPool jedisPool;
-    private String auth;
+    private final String auth;
 
     private RedisDatabase(String host, int port, String password) {
         jedisPool = new JedisPool(host, port);
