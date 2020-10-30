@@ -4,10 +4,10 @@ import com.google.common.base.Joiner;
 import dev.spaceseries.api.abstraction.server.Server;
 import dev.spaceseries.api.command.SpaceCommandSender;
 import dev.spaceseries.api.config.impl.Configuration;
-import dev.spaceseries.api.text.component.platform.BungeeCordComponentSerializer;
 import dev.spaceseries.api.util.ColorUtil;
 import lombok.Getter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.chat.*;
 
 import java.util.*;
@@ -136,10 +136,10 @@ public class Message {
     public List<BaseComponent[]> toBaseComponents(String... replacers) {
         List<BaseComponent[]> components = new ArrayList<>();
 
-//        // if rich text is present
+        // if rich text is present
         if (richLines != null && !richLines.isEmpty()) {
             // add the parsed lines to the components list
-            components.addAll(richLines.stream().map(line -> BungeeCordComponentSerializer.get().serialize(MiniMessage.get().parse(line, replacers))).collect(Collectors.toList()));
+            components.addAll(richLines.stream().map(line -> BungeeComponentSerializer.get().serialize(MiniMessage.get().parse(line, replacers))).collect(Collectors.toList()));
             // return as-is
             return components;
         }

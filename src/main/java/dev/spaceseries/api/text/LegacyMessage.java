@@ -202,15 +202,15 @@ public class LegacyMessage {
 
     public static class Global {
         public static final LegacyMessage ACCESS_DENIED = LegacyMessage.builder("access-denied")
-                .error("Insufficient permissions!")
+                .error(ChatColor.RED + "Insufficient permissions!")
                 .build();
 
         public static final LegacyMessage PLAYERS_ONLY = LegacyMessage.builder("players-only")
-                .error("Only players are allowed to do this.")
+                .error(ChatColor.RED + "Only players are allowed to do this.")
                 .build();
 
         public static final LegacyMessage PLAYER_NOT_FOUND = LegacyMessage.builder("player-not-found")
-                .error("Player not found!")
+                .error(ChatColor.RED + "Player not found!")
                 .build();
 
     }

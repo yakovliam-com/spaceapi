@@ -2,6 +2,7 @@ package dev.spaceseries.api.abstraction.plugin;
 
 import dev.spaceseries.api.command.BungeeSpaceCommandSender;
 import dev.spaceseries.api.command.Permissible;
+import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.plugin.Command;
 
 import java.io.File;
@@ -12,6 +13,7 @@ public class BungeePlugin extends Plugin {
 
     public BungeePlugin(net.md_5.bungee.api.plugin.Plugin plugin) {
         this.plugin = plugin;
+        BungeeAudiences.create(plugin);
     }
 
     @Override
@@ -45,7 +47,4 @@ public class BungeePlugin extends Plugin {
             command.execute(new BungeeSpaceCommandSender(sender), command.getName(), args); // label not quite accurate (but who cares)
         }
     }
-
-
-
 }
