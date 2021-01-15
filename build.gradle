@@ -26,13 +26,13 @@ dependencies {
     // bungee
     compileOnly "net.md-5:bungeecord-api:1.16-R0.4-SNAPSHOT"
     // bungee chat
-    compile "net.md-5:bungeecord-chat:1.16-R0.4-SNAPSHOT"
+    implementation "net.md-5:bungeecord-chat:1.16-R0.4-SNAPSHOT"
 
     // redis
-    compile group: 'redis.clients', name: 'jedis', version: '2.9.0'
+    implementation group: 'redis.clients', name: 'jedis', version: '2.9.0'
 
     // hikari
-    compile group: 'com.zaxxer', name: 'HikariCP', version: '3.1.0'
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '3.1.0'
 
     // lombok
     compileOnly 'org.projectlombok:lombok:1.18.12'
@@ -43,7 +43,7 @@ dependencies {
 
     // snakeYAML
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml
-    compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.8'
 
     // google gson
     implementation 'com.google.code.gson:gson:2.8.6'
