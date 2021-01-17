@@ -6,9 +6,16 @@ import dev.spaceseries.api.command.SpaceCommandSender;
 import dev.spaceseries.api.config.impl.Configuration;
 import dev.spaceseries.api.util.ColorUtil;
 import lombok.Getter;
+import net.kyori.adventure.platform.AudienceProvider;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
-import net.md_5.bungee.api.chat.*;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -22,13 +29,22 @@ public class Message {
     private final String ident;
     private final List<String> lines;
     private final List<Extra> extras;
-    private final List<String> richLines;
+    private final String richLine;
+    private static AudienceProvider audienceProvider;
 
-    private Message(String ident, List<String> lines, List<Extra> extras, List<String> richLines) {
+    public static void initAudience(AudienceProvider ap) {
+        audienceProvider = ap;
+    }
+
+    public static AudienceProvider getAudienceProvider() {
+        return audienceProvider;
+    }
+
+    private Message(String ident, List<String> lines, List<Extra> extras, String richLine) {
         this.ident = ident;
         this.lines = lines;
         this.extras = extras;
-        this.richLines = richLines;
+        this.richLine = richLine;
     }
 
     public String getIdent() {
@@ -40,13 +56,14 @@ public class Message {
     }
 
     public void msg(Iterable<SpaceCommandSender> senders, String... replacers) {
-        for (BaseComponent[] c : toBaseComponents(replacers)) {
-            for (SpaceCommandSender sender : senders) {
-                if (!sender.isPlayer()) {
-                    sender.sendMessage(TextComponent.toLegacyText(c));
-                } else {
-                    sender.sendMessage(c);
-                }
+        // get component
+        Component component = toComponent(replacers);
+
+        for (SpaceCommandSender sender : senders) {
+            if (!sender.isPlayer()) {
+                audienceProvider.console().sendMessage(component);
+            } else {
+                audienceProvider.player(sender.getUuid()).sendMessage(component);
             }
         }
     }
@@ -56,10 +73,10 @@ public class Message {
         Builder builder = Message.builder(ident);
 
         // if rich exists, return builder as-is but with rich
-        List<String> rich = section.getStringList("rich", Collections.emptyList());
+        String rich = section.getString("rich", null);
         if (rich != null && !rich.isEmpty()) {
             // return builder with rich text
-            return builder.setRichLines(rich);
+            return builder.setRichLine(rich);
         }
 
         // initialize empty list
@@ -133,18 +150,19 @@ public class Message {
         return new Message.Builder(ident);
     }
 
-    public List<BaseComponent[]> toBaseComponents(String... replacers) {
-        List<BaseComponent[]> components = new ArrayList<>();
+    public Component toComponent(String... replacers) {
+        ComponentBuilder<TextComponent, TextComponent.Builder> components = Component.text();
 
         // if rich text is present
-        if (richLines != null && !richLines.isEmpty()) {
+        if (richLine != null && !richLine.isEmpty()) {
             // add the parsed lines to the components list
-            components.addAll(richLines.stream().map(line -> BungeeComponentSerializer.get().serialize(MiniMessage.get().parse(line, replacers))).collect(Collectors.toList()));
+            components.append(MiniMessage.get().parse(richLine, replacers));
             // return as-is
-            return components;
+            return components.build();
         }
 
         int count = 0;
+        int loopCounter = 0;
         for (String text : lines) {
             text = ColorUtil.translateFromAmpersand(text);
 
@@ -158,18 +176,19 @@ public class Message {
                 }
             }
 
-            ComponentBuilder cb = new ComponentBuilder("");
+            ComponentBuilder<TextComponent, TextComponent.Builder> componentBuilder = Component.text();
 
             int i1, i2 = -1;
             do {
                 i1 = text.indexOf(DELIMITER, i2 + 1);
                 if (i1 != -1) {
-                    cb.append(ColorUtil.fromLegacyText(text.substring(i2 + 1, i1)));
+                    componentBuilder.append(LegacyComponentSerializer.legacySection().deserialize(text.substring(i2 + 1, i1)));
 
                     i2 = text.indexOf(DELIMITER, i1 + 1);
                     if (i2 != -1) {
-                        BaseComponent[] extras = ColorUtil.fromLegacyText(text.substring(i1 + 1, i2));
-                        ComponentBuilder evt = new ComponentBuilder("").append(new TextComponent(extras));
+                        Component extras = LegacyComponentSerializer.legacySection().deserialize(text.substring(i1 + 1, i2));
+                        ComponentBuilder<TextComponent, TextComponent.Builder> eventComponentBuilder = Component.text()
+                                .append(extras);
 
                         Extra extra;
 
@@ -180,41 +199,48 @@ public class Message {
                         }
 
                         if (extra.tooltip != null) {
-                            evt.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                    ColorUtil.fromLegacyText(Joiner.on("\n").join(extra.tooltip.stream()
-                                            .map(ColorUtil::translateFromAmpersand)
-                                            .iterator()))
-                            ));
+                            // join multi lines into one
+                            String singleLineFromMultiLine = Joiner.on("\n").join(extra.tooltip.stream().iterator());
+
+                            // create component from the line
+                            Component component = Component.text()
+                                    .append(LegacyComponentSerializer.legacyAmpersand().deserialize(singleLineFromMultiLine))
+                                    .build();
+
+                            // add hover event to main builder
+                            eventComponentBuilder.hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, component));
                         }
 
                         if (extra.action != null) {
                             switch (extra.action) {
                                 case RUN_COMMAND:
-                                    evt.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, extra.content));
+                                    eventComponentBuilder.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, extra.content));
                                     break;
                                 case SUGGEST:
-                                    evt.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, extra.content));
+                                    eventComponentBuilder.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.SUGGEST_COMMAND, extra.content));
                                     break;
                                 case OPEN_URL:
-                                    evt.event(new ClickEvent(ClickEvent.Action.OPEN_URL, extra.content));
+                                    eventComponentBuilder.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.OPEN_URL, extra.content));
                                     break;
                             }
                         }
 
-                        cb.append(evt.create());
+                        componentBuilder.append(eventComponentBuilder.build());
                     }
 
                 }
             } while (i1 != -1 && i2 != -1);
 
             if (i1 == -1) {
-                cb.append(ColorUtil.fromLegacyText(text.substring(i2 + 1)));
+                componentBuilder.append(LegacyComponentSerializer.legacySection().deserialize(text.substring(i2 + 1)));
             }
 
-            components.add(cb.create());
+            components.append(loopCounter >= lines.size() - 1 ? componentBuilder.build() : componentBuilder.append(Component.text("\n")).build());
+
+            loopCounter++;
         }
 
-        return components;
+        return components.build();
     }
 
     @Getter
@@ -256,7 +282,7 @@ public class Message {
 
         private final List<String> lines = new ArrayList<>();
         private final List<Extra> extras = new ArrayList<>();
-        private List<String> richLines;
+        private String richLine;
 
         public Builder(String ident) {
             this.ident = ident;
@@ -272,13 +298,28 @@ public class Message {
             return this;
         }
 
-        public Builder setRichLines(List<String> richLines) {
-            this.richLines = richLines;
+        public Builder setRichLine(String richLine) {
+            this.richLine = richLine;
             return this;
         }
 
         public Message build() {
-            return new Message(ident, lines, extras, richLines);
+            return new Message(ident, lines, extras, richLine);
         }
+    }
+
+    public static class Global {
+        public static final Message ACCESS_DENIED = Message.builder("access-denied")
+                .addLine(ChatColor.RED + "Insufficient permissions!")
+                .build();
+
+        public static final Message PLAYERS_ONLY = Message.builder("players-only")
+                .addLine(ChatColor.RED + "Only players are allowed to do this.")
+                .build();
+
+        public static final Message PLAYER_NOT_FOUND = Message.builder("player-not-found")
+                .addLine(ChatColor.RED + "Player not found!")
+                .build();
+
     }
 }

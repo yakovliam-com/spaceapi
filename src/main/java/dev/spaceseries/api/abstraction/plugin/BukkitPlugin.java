@@ -2,6 +2,8 @@ package dev.spaceseries.api.abstraction.plugin;
 
 import dev.spaceseries.api.command.BukkitSpaceCommandSender;
 import dev.spaceseries.api.command.Command;
+import dev.spaceseries.api.text.Message;
+import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -17,7 +19,10 @@ public class BukkitPlugin extends Plugin {
 
     public BukkitPlugin(JavaPlugin plugin) {
         this.plugin = plugin;
-        BukkitAudiences.create(plugin);
+        AudienceProvider audienceProvider = BukkitAudiences.create(plugin);
+
+        // initialize messages
+        Message.initAudience(audienceProvider);
     }
 
     @Override

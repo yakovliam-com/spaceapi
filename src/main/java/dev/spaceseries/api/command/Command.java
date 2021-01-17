@@ -2,8 +2,8 @@ package dev.spaceseries.api.command;
 
 import com.google.common.base.Joiner;
 import dev.spaceseries.api.abstraction.plugin.Plugin;
+import dev.spaceseries.api.text.Message;
 import dev.spaceseries.api.util.Utility;
-import dev.spaceseries.api.text.LegacyMessage;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,12 +71,12 @@ public abstract class Command {
 
     public boolean execute(SpaceCommandSender sender, String commandLabel, String[] args) {
         if (!sender.isPlayer() && this.getClass().getDeclaredAnnotation(PlayersOnly.class) != null) {
-            LegacyMessage.Global.PLAYERS_ONLY.msg(sender);
+            Message.Global.PLAYERS_ONLY.msg(sender);
             return true;
         }
 
         if (!this.checkPermissions(sender)) {
-            LegacyMessage.Global.ACCESS_DENIED.msg(sender);
+            Message.Global.ACCESS_DENIED.msg(sender);
             return true;
         }
 

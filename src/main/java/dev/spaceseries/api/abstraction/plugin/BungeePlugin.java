@@ -2,6 +2,8 @@ package dev.spaceseries.api.abstraction.plugin;
 
 import dev.spaceseries.api.command.BungeeSpaceCommandSender;
 import dev.spaceseries.api.command.Permissible;
+import dev.spaceseries.api.text.Message;
+import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -13,7 +15,10 @@ public class BungeePlugin extends Plugin {
 
     public BungeePlugin(net.md_5.bungee.api.plugin.Plugin plugin) {
         this.plugin = plugin;
-        BungeeAudiences.create(plugin);
+        AudienceProvider audienceProvider = BungeeAudiences.create(plugin);
+
+        // initialize messages
+        Message.initAudience(audienceProvider);
     }
 
     @Override
