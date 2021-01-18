@@ -61,8 +61,6 @@ dependencies {
 
 }
 
-import org.apache.tools.ant.filters.ReplaceTokens
-
 shadowJar {
     project.ext.majorVersion = '1'
     project.ext.midVersion = '0'

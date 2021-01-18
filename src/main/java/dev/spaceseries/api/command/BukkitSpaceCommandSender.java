@@ -1,10 +1,15 @@
 package dev.spaceseries.api.command;
 
+import dev.spaceseries.api.text.Message;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.UUID;
 
 public class BukkitSpaceCommandSender extends SpaceCommandSender {
@@ -27,15 +32,15 @@ public class BukkitSpaceCommandSender extends SpaceCommandSender {
     @Override
     public void sendMessage(BaseComponent... message) {
         if (sender instanceof Player) {
-            sender.spigot().sendMessage(message);
+            Message.getAudienceProvider().player(((Player) sender).getUniqueId()).sendMessage(BungeeComponentSerializer.get().deserialize(message));
         } else {
-            sender.sendMessage(TextComponent.toLegacyText(message));
+            Message.getAudienceProvider().player(((Player) sender).getUniqueId()).sendMessage(BungeeComponentSerializer.get().deserialize(message));
         }
     }
 
     @Override
     public void sendMessage(BaseComponent message) {
-        sender.spigot().sendMessage(message);
+        Message.getAudienceProvider().player(((Player) sender).getUniqueId()).sendMessage(BungeeComponentSerializer.get().deserialize(Collections.singletonList(message).toArray(new BaseComponent[0])));
     }
 
     @Override
