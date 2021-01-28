@@ -68,7 +68,7 @@ shadowJar {
     project.ext.versionType = 'SNAPSHOT'
     project.ext.pluginVersion = project.ext.majorVersion + '.' + project.ext.midVersion + '.' + project.ext.minorVersion + "-" + project.ext.versionType
 
-    archiveName = "SpaceAPI-${project.ext.pluginVersion}.jar"
+    archiveName = "spaceapi-${project.ext.pluginVersion}.jar"
 }
 
 
