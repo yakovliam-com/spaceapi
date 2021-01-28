@@ -4,12 +4,10 @@ import dev.spaceseries.api.gui.components.ActionButton;
 import dev.spaceseries.api.gui.components.Button;
 import dev.spaceseries.api.gui.components.CloseAction;
 import dev.spaceseries.api.gui.components.PlainButton;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,15 +21,10 @@ public class Gui {
 
     private final JavaPlugin plugin;
 
-    @Getter
     private final int rows;
-    @Getter
     private final String displayName;
-    @Getter
     private final Map<Integer, Button> buttons;
-    @Getter
     private final int slots;
-    @Getter
     private CloseAction closeAction;
 
     public Gui(JavaPlugin plugin, int rows, String displayName, Map<Integer, Button> buttons) {
@@ -125,5 +118,29 @@ public class Gui {
 
         // re-open, but this time it's the NEW one...this prevents interaction issues
         player.openInventory(inventory);
+    }
+
+    public JavaPlugin getPlugin() {
+        return plugin;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public Map<Integer, Button> getButtons() {
+        return buttons;
+    }
+
+    public int getSlots() {
+        return slots;
+    }
+
+    public CloseAction getCloseAction() {
+        return closeAction;
     }
 }

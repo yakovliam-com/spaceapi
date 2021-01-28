@@ -1,23 +1,50 @@
 package dev.spaceseries.api.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@AllArgsConstructor
-@NoArgsConstructor
 public class Quad<A, B, C, D> {
-    @Getter
-    @Setter
     A a;
-    @Getter
-    @Setter
     B b;
-    @Getter
-    @Setter
     C c;
-    @Getter
-    @Setter
     D d;
+
+    public Quad() {
+    }
+
+    public Quad(A a, B b, C c, D d) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+        this.d = d;
+    }
+
+    public A getA() {
+        return a;
+    }
+
+    public void setA(A a) {
+        this.a = a;
+    }
+
+    public B getB() {
+        return b;
+    }
+
+    public void setB(B b) {
+        this.b = b;
+    }
+
+    public C getC() {
+        return c;
+    }
+
+    public void setC(C c) {
+        this.c = c;
+    }
+
+    public D getD() {
+        return d;
+    }
+
+    public void setD(D d) {
+        this.d = d;
+    }
 }

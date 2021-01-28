@@ -1,6 +1,5 @@
 package dev.spaceseries.api.gui.components;
 
-import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
@@ -11,7 +10,6 @@ public class CloseAction {
     /**
      * The action executed when the gui is closed
      */
-    @Getter
     private final BiConsumer<Player, InventoryCloseEvent> action;
 
     /**
@@ -21,5 +19,9 @@ public class CloseAction {
      */
     public CloseAction(BiConsumer<Player, InventoryCloseEvent> action) {
         this.action = action;
+    }
+
+    public BiConsumer<Player, InventoryCloseEvent> getAction() {
+        return action;
     }
 }

@@ -13,15 +13,15 @@ import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.representer.Representer;
 
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class YamlConfiguration extends ConfigurationProvider {
+
+    public YamlConfiguration() {
+    }
 
     private final ThreadLocal<Yaml> yaml = ThreadLocal.withInitial(() -> {
         Representer representer = new Representer() {

@@ -1,17 +1,43 @@
 package dev.spaceseries.api.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@AllArgsConstructor
-@NoArgsConstructor
 public class Trio<L, M, R> {
-    @Getter @Setter
+
     L left;
-    @Getter @Setter
+
     R right;
-    @Getter @Setter
+
     M mid;
+
+    public Trio() {
+    }
+
+    public Trio(L l, M m, R r) {
+        this.left = l;
+        this.mid = m;
+        this.right = r;
+    }
+
+    public L getLeft() {
+        return left;
+    }
+
+    public void setLeft(L left) {
+        this.left = left;
+    }
+
+    public R getRight() {
+        return right;
+    }
+
+    public void setRight(R right) {
+        this.right = right;
+    }
+
+    public M getMid() {
+        return mid;
+    }
+
+    public void setMid(M mid) {
+        this.mid = mid;
+    }
 }

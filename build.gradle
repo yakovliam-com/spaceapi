@@ -3,9 +3,7 @@ plugins {
 }
 
 apply plugin: 'java'
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+apply plugin: 'maven'
 
 repositories {
     mavenCentral()
@@ -32,13 +30,6 @@ dependencies {
 
     // hikari
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '3.1.0'
-
-    // lombok
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
-
-    testCompileOnly 'org.projectlombok:lombok:1.18.12'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
 
     // snakeYAML
     // https://mvnrepository.com/artifact/org.yaml/snakeyaml

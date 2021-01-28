@@ -5,9 +5,7 @@ import dev.spaceseries.api.abstraction.server.Server;
 import dev.spaceseries.api.command.SpaceCommandSender;
 import dev.spaceseries.api.config.impl.Configuration;
 import dev.spaceseries.api.util.ColorUtil;
-import lombok.Getter;
 import net.kyori.adventure.platform.AudienceProvider;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentBuilder;
 import net.kyori.adventure.text.TextComponent;
@@ -243,7 +241,6 @@ public class Message {
         return components.build();
     }
 
-    @Getter
     public static class Extra {
         private List<String> tooltip;
 
@@ -273,6 +270,18 @@ public class Message {
             OPEN_URL,
             RUN_COMMAND,
             SUGGEST
+        }
+
+        public List<String> getTooltip() {
+            return tooltip;
+        }
+
+        public ClickAction getAction() {
+            return action;
+        }
+
+        public String getContent() {
+            return content;
         }
     }
 

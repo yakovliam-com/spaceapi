@@ -20,11 +20,10 @@ import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
 public class JsonConfiguration extends ConfigurationProvider {
+
+    public JsonConfiguration() {
+    }
 
     private final Gson json = new GsonBuilder().serializeNulls().setPrettyPrinting().registerTypeAdapter(Configuration.class, new JsonSerializer<Configuration>() {
         @Override

@@ -1,15 +1,12 @@
 package dev.spaceseries.api.gui;
 
-import lombok.Getter;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class GuiInventoryHolder implements InventoryHolder {
 
-    @Getter
     private final JavaPlugin plugin;
-    @Getter
     private final Gui gui;
 
     private Inventory inventory;
@@ -26,5 +23,13 @@ public class GuiInventoryHolder implements InventoryHolder {
     @Override
     public Inventory getInventory() {
         return inventory;
+    }
+
+    public JavaPlugin getPlugin() {
+        return plugin;
+    }
+
+    public Gui getGui() {
+        return gui;
     }
 }
