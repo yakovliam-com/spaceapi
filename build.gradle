@@ -3,8 +3,22 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+// groupid and versioning
+group 'dev.spaceseries'
+
+project.ext.majorVersion = '1'
+project.ext.midVersion = '0'
+project.ext.minorVersion = '0'
+project.ext.versionType = 'SNAPSHOT'
+project.ext.version = project.ext.majorVersion + '.' + project.ext.midVersion + '.' + project.ext.minorVersion + '-' + project.ext.versionType;
+version = project.ext.version
+
+// repos
 repositories {
     mavenCentral()
     maven {
@@ -17,6 +31,7 @@ repositories {
     }
 }
 
+// dependencies
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
@@ -52,22 +67,63 @@ dependencies {
 
 }
 
+// shadow jar task (shades into jar)
 shadowJar {
-    project.ext.majorVersion = '1'
-    project.ext.midVersion = '0'
-    project.ext.minorVersion = '1'
-    project.ext.pluginVersion = project.ext.majorVersion + '.' + project.ext.midVersion + '.' + project.ext.minorVersion
-
-    archiveName = "spaceapi-${project.ext.pluginVersion}.jar"
+    archiveName = "spaceapi-${version}.jar"
 }
 
 
+// builds actual libaries into jar
 jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }
 
+// artifacts
 artifacts {
     archives shadowJar
 }
+
+// javadoc jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier.set('javadoc')
+    from javadoc.destinationDir
+}
+
+// javadoc
+javadoc {
+    if (JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+// sources jar
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+// publishing task
+publishing {
+    repositories {
+        maven {
+            def releasesRepoUrl = "http://repo.yakovliam.com/releases"
+            def snapshotsRepoUrl = "http://repo.yakovliam.com/snapshots"
+            url = project.ext.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+            credentials {
+                username repoUsername
+                password repoPassword
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+
