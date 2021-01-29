@@ -21,6 +21,7 @@ public class ColorUtil {
      * Converts string into baseComponents
      *
      * @param message message
+     * @return basecomponent array
      */
     @Deprecated
     public static BaseComponent[] fromLegacyText(String message) {
@@ -32,6 +33,7 @@ public class ColorUtil {
      *
      * @param message      message
      * @param defaultColor the default color
+     * @return basecomponent array
      */
     @Deprecated
     public static BaseComponent[] fromLegacyText(String message, ChatColor defaultColor) {
