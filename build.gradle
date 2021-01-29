@@ -108,13 +108,13 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 publishing {
     repositories {
         maven {
-            def releasesRepoUrl = "http://repo.yakovliam.com/releases"
-            def snapshotsRepoUrl = "http://repo.yakovliam.com/snapshots"
+            def releasesRepoUrl = "https://repo.yakovliam.com/releases"
+            def snapshotsRepoUrl = "https://repo.yakovliam.com/snapshots"
             url = project.ext.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
             credentials {
-                username System.getenv("REPO_USERNAME")
-                password System.getenv("REPO_PASSWORD")
+                username System.getenv("CI_REPO_USERNAME")
+                password System.getenv("CI_REPO_PASSWORD")
             }
         }
     }
