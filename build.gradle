@@ -113,8 +113,8 @@ publishing {
             url = project.ext.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
             credentials {
-                username repoUsername
-                password repoPassword
+                username System.getenv("REPO_USERNAME")
+                password System.getenv("REPO_PASSWORD")
             }
         }
     }
