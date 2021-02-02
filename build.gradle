@@ -13,7 +13,7 @@ group 'dev.spaceseries'
 
 project.ext.majorVersion = '1'
 project.ext.midVersion = '0'
-project.ext.minorVersion = '0'
+project.ext.minorVersion = '1'
 project.ext.versionType = 'SNAPSHOT'
 project.ext.version = project.ext.majorVersion + '.' + project.ext.midVersion + '.' + project.ext.minorVersion + '-' + project.ext.versionType;
 version = project.ext.version
@@ -58,12 +58,12 @@ dependencies {
     implementation "net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT"
     implementation "net.kyori:adventure-platform-bungeecord:4.0.0-SNAPSHOT"
     // minmessage
-    implementation 'net.kyori:adventure-text-minimessage:4.0.0-SNAPSHOT'
+    implementation 'net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT'
     // apis
-    implementation "net.kyori:adventure-api:4.3.0"
-    implementation "net.kyori:adventure-text-serializer-plain:4.3.0"
-    implementation "net.kyori:adventure-text-serializer-gson:4.3.0"
-    implementation "net.kyori:adventure-text-serializer-legacy:4.3.0"
+    implementation "net.kyori:adventure-api:4.4.0"
+    implementation "net.kyori:adventure-text-serializer-plain:4.4.0"
+    implementation "net.kyori:adventure-text-serializer-gson:4.4.0"
+    implementation "net.kyori:adventure-text-serializer-legacy:4.4.0"
 
 }
 
