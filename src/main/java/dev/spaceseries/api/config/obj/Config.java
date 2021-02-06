@@ -124,12 +124,14 @@ public class Config {
             throw new IllegalArgumentException("Filename cannot be null");
         }
 
-        InputStream inputStream = null;
+        InputStream inputStream;
 
         if (plugin instanceof BukkitPlugin) {
             inputStream = ((BukkitPlugin) plugin).getPlugin().getResource(filename);
         } else if (plugin instanceof BungeePlugin) {
             inputStream = ((BungeePlugin) plugin).getPlugin().getResourceAsStream(filename);
+        } else {
+            return null;
         }
 
         return inputStream;
