@@ -1,7 +1,6 @@
 package dev.spaceseries.api.config.obj;
 
 import dev.spaceseries.api.abstraction.plugin.BukkitPlugin;
-import dev.spaceseries.api.abstraction.plugin.BungeePlugin;
 import dev.spaceseries.api.abstraction.plugin.Plugin;
 import dev.spaceseries.api.config.impl.Configuration;
 import dev.spaceseries.api.config.impl.ConfigurationProvider;
@@ -124,17 +123,19 @@ public class Config {
             throw new IllegalArgumentException("Filename cannot be null");
         }
 
-        InputStream inputStream;
+        try {
+            URL url = plugin.getPlugin().getClass().getClassLoader().getResource(filename);
 
-        if (plugin instanceof BukkitPlugin) {
-            inputStream = ((BukkitPlugin) plugin).getPlugin().getResource(filename);
-        } else if (plugin instanceof BungeePlugin) {
-            inputStream = ((BungeePlugin) plugin).getPlugin().getResourceAsStream(filename);
-        } else {
+            if (url == null) {
+                return null;
+            }
+
+            URLConnection connection = url.openConnection();
+            connection.setUseCaches(false);
+            return connection.getInputStream();
+        } catch (IOException ex) {
             return null;
         }
-
-        return inputStream;
     }
 
     /**
