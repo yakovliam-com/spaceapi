@@ -9,7 +9,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 import java.io.File;
 
-public class BungeePlugin extends Plugin {
+public class BungeePlugin extends Plugin<net.md_5.bungee.api.plugin.Plugin> {
 
     private final net.md_5.bungee.api.plugin.Plugin plugin;
 
@@ -51,5 +51,15 @@ public class BungeePlugin extends Plugin {
         public void execute(net.md_5.bungee.api.CommandSender sender, String[] args) {
             command.execute(new BungeeSpaceCommandSender(sender), command.getName(), args); // label not quite accurate (but who cares)
         }
+    }
+
+    /**
+     * Returns main class instance
+     *
+     * @return instance
+     */
+    @Override
+    public net.md_5.bungee.api.plugin.Plugin getPlugin() {
+        return plugin;
     }
 }

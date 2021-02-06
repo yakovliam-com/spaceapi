@@ -1,5 +1,7 @@
 package dev.spaceseries.api.config.obj;
 
+import dev.spaceseries.api.abstraction.plugin.BukkitPlugin;
+import dev.spaceseries.api.abstraction.plugin.BungeePlugin;
 import dev.spaceseries.api.abstraction.plugin.Plugin;
 import dev.spaceseries.api.config.impl.Configuration;
 import dev.spaceseries.api.config.impl.ConfigurationProvider;
@@ -11,7 +13,7 @@ import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Config  {
+public class Config {
 
     /**
      * The configuration object
@@ -41,7 +43,7 @@ public class Config  {
     /**
      * Initializes new config; directory defaults to {Plugin#getDataFolder()}
      *
-     * @param plugin The contextual plugin
+     * @param plugin   The contextual plugin
      * @param fileName The name of the config as it appears in the jar's resources directory
      */
     public Config(Plugin plugin, String fileName) {
@@ -52,8 +54,8 @@ public class Config  {
     /**
      * Initializes new config
      *
-     * @param plugin The contextual plugin
-     * @param fileName The name of the config as it appears in the jar's resources directory
+     * @param plugin    The contextual plugin
+     * @param fileName  The name of the config as it appears in the jar's resources directory
      * @param directory The custom directory to put the target config in (external, usually in the plugins/PluginName folder)
      */
     public Config(Plugin plugin, File directory, String fileName) {
@@ -76,7 +78,7 @@ public class Config  {
      * Implementation of Bukkit's {Plugin#saveResource()} method to accommodate for this custom configuration directory, etc
      *
      * @param resourcePath The path of the resource, usually just the name of the configuration file in the jar (e.g. "config.yml")
-     * @param replace Do we want to replace the external config if it exists?
+     * @param replace      Do we want to replace the external config if it exists?
      */
     public void saveResource(String resourcePath, boolean replace) {
         resourcePath = resourcePath.replace('\\', '/');
@@ -122,19 +124,15 @@ public class Config  {
             throw new IllegalArgumentException("Filename cannot be null");
         }
 
-        try {
-            URL url = plugin.getClass().getClassLoader().getResource(filename);
+        InputStream inputStream = null;
 
-            if (url == null) {
-                return null;
-            }
-
-            URLConnection connection = url.openConnection();
-            connection.setUseCaches(false);
-            return connection.getInputStream();
-        } catch (IOException ex) {
-            return null;
+        if (plugin instanceof BukkitPlugin) {
+            inputStream = ((BukkitPlugin) plugin).getPlugin().getResource(filename);
+        } else if (plugin instanceof BungeePlugin) {
+            inputStream = ((BungeePlugin) plugin).getPlugin().getResourceAsStream(filename);
         }
+
+        return inputStream;
     }
 
     /**
@@ -169,7 +167,7 @@ public class Config  {
     /**
      * Sets a value in the configuration, automatically saves
      *
-     * @param key The path of the value
+     * @param key   The path of the value
      * @param value The value
      */
     public void set(String key, Object value) {

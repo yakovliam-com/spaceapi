@@ -6,9 +6,11 @@ import net.kyori.adventure.platform.AudienceProvider;
 
 import java.io.File;
 
-public abstract class Plugin {
+public abstract class Plugin<T> {
 
     public abstract void registerCommand(Command command);
 
     public abstract File getDataFolder();
+
+    public abstract T getPlugin();
 }
