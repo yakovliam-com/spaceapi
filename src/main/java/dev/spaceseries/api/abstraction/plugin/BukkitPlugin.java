@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.lang.reflect.Field;
 
-public class BukkitPlugin extends Plugin {
+public class BukkitPlugin extends Plugin<JavaPlugin> {
 
     private final JavaPlugin plugin;
 
@@ -60,4 +60,13 @@ public class BukkitPlugin extends Plugin {
         }
     }
 
+    /**
+     * Returns main class instance
+     *
+     * @return instance
+     */
+    @Override
+    public JavaPlugin getPlugin() {
+        return plugin;
+    }
 }
