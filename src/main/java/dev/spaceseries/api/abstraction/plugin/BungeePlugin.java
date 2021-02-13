@@ -11,8 +11,16 @@ import java.io.File;
 
 public class BungeePlugin extends Plugin<net.md_5.bungee.api.plugin.Plugin> {
 
+    /**
+     * Bungee plugin
+     */
     private final net.md_5.bungee.api.plugin.Plugin plugin;
 
+    /**
+     * Construct bungee plugin
+     *
+     * @param plugin plugin
+     */
     public BungeePlugin(net.md_5.bungee.api.plugin.Plugin plugin) {
         this.plugin = plugin;
         AudienceProvider audienceProvider = BungeeAudiences.create(plugin);
@@ -21,6 +29,13 @@ public class BungeePlugin extends Plugin<net.md_5.bungee.api.plugin.Plugin> {
         Message.initAudience(audienceProvider);
     }
 
+    /**
+     * Register command
+     * <p>
+     * Usually internal use only
+     *
+     * @param command command
+     */
     @Override
     public void registerCommand(dev.spaceseries.api.command.Command command) {
         Permissible permissible = command.getClass().getAnnotation(Permissible.class);
@@ -33,6 +48,11 @@ public class BungeePlugin extends Plugin<net.md_5.bungee.api.plugin.Plugin> {
         plugin.getProxy().getPluginManager().registerCommand(plugin, new BungeeCommand(command, permission));
     }
 
+    /**
+     * Returns data folder
+     *
+     * @return folder
+     */
     @Override
     public File getDataFolder() {
         return plugin.getDataFolder();

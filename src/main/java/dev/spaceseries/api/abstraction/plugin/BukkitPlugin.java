@@ -9,14 +9,23 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Field;
 
 public class BukkitPlugin extends Plugin<JavaPlugin> {
 
+    /**
+     * Plugin
+     */
     private final JavaPlugin plugin;
 
+    /**
+     * Construct bukkit plugin
+     *
+     * @param plugin plugin
+     */
     public BukkitPlugin(JavaPlugin plugin) {
         this.plugin = plugin;
         AudienceProvider audienceProvider = BukkitAudiences.create(plugin);
@@ -25,6 +34,13 @@ public class BukkitPlugin extends Plugin<JavaPlugin> {
         Message.initAudience(audienceProvider);
     }
 
+    /**
+     * Register command
+     * <p>
+     * Usually internal use only
+     *
+     * @param command command
+     */
     @Override
     public void registerCommand(Command command) {
         SimpleCommandMap commandMap;
@@ -40,6 +56,11 @@ public class BukkitPlugin extends Plugin<JavaPlugin> {
         commandMap.register(command.getName(), new BukkitCommand(command));
     }
 
+    /**
+     * Get data folder
+     *
+     * @return folder
+     */
     @Override
     public File getDataFolder() {
         return plugin.getDataFolder();
@@ -55,7 +76,7 @@ public class BukkitPlugin extends Plugin<JavaPlugin> {
         }
 
         @Override
-        public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+        public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String[] args) {
             return command.execute(new BukkitSpaceCommandSender(sender), commandLabel, args);
         }
     }
