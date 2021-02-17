@@ -38,7 +38,7 @@ dependencies {
     // spigot
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     // bungee
-    compileOnly "net.md-5:bungeecord-api:1.16-R0.4-SNAPSHOT"
+    compileOnly "net.md-5:bungeecord-api:1.16-R0.4"
 
     // redis
     implementation group: 'redis.clients', name: 'jedis', version: '2.9.0'
@@ -60,15 +60,16 @@ dependencies {
     // minmessage
     implementation 'net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT'
     // apis
-    implementation "net.kyori:adventure-api:4.4.0"
-    implementation "net.kyori:adventure-text-serializer-plain:4.4.0"
-    implementation "net.kyori:adventure-text-serializer-gson:4.4.0"
-    implementation "net.kyori:adventure-text-serializer-legacy:4.4.0"
+    implementation "net.kyori:adventure-api:4.5.0"
+    implementation "net.kyori:adventure-text-serializer-plain:4.5.0"
+    implementation "net.kyori:adventure-text-serializer-gson:4.5.0"
+    implementation "net.kyori:adventure-text-serializer-legacy:4.5.0"
 
 }
 
 // shadow jar task (shades into jar)
 shadowJar {
+    relocate 'net.kyori', 'dev.spaceseries.spaceapi.text.kyori'
     archiveName = "spaceapi-${version}.jar"
 }
 
