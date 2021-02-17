@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 apply plugin: 'java'
@@ -114,14 +114,16 @@ publishing {
             url = project.ext.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
             credentials {
+//                username "$CI_REPO_USERNAME"
+//                password "$CI_REPO_PASSWORD"
                 username System.getenv("CI_REPO_USERNAME")
                 password System.getenv("CI_REPO_PASSWORD")
             }
         }
     }
     publications {
-        mavenJava(MavenPublication) {
-            from components.java
+        shadow(MavenPublication) { publication ->
+            from project.shadow.component(publication)
             artifact sourcesJar
             artifact javadocJar
         }
