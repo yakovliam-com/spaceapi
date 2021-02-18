@@ -13,7 +13,7 @@ group 'dev.spaceseries'
 
 project.ext.majorVersion = '1'
 project.ext.midVersion = '0'
-project.ext.minorVersion = '6'
+project.ext.minorVersion = '7'
 project.ext.versionType = 'SNAPSHOT'
 project.ext.version = project.ext.majorVersion + '.' + project.ext.midVersion + '.' + project.ext.minorVersion + '-' + project.ext.versionType;
 version = project.ext.version
@@ -69,8 +69,9 @@ dependencies {
 
 // shadow jar task (shades into jar)
 shadowJar {
-    relocate 'net.kyori', 'dev.spaceseries.spaceapi.text.kyori'
+    relocate 'net.kyori', 'dev.spaceseries.spaceapi.lib.adventure'
     archiveName = "spaceapi-${version}.jar"
+    classifier = null
 }
 
 
@@ -129,5 +130,3 @@ publishing {
         }
     }
 }
-
-assemble.dependsOn shadowJar
