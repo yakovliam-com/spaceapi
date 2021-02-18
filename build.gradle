@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '5.2.0'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
 apply plugin: 'java'
@@ -13,7 +13,7 @@ group 'dev.spaceseries'
 
 project.ext.majorVersion = '1'
 project.ext.midVersion = '0'
-project.ext.minorVersion = '4'
+project.ext.minorVersion = '7'
 project.ext.versionType = 'SNAPSHOT'
 project.ext.version = project.ext.majorVersion + '.' + project.ext.midVersion + '.' + project.ext.minorVersion + '-' + project.ext.versionType;
 version = project.ext.version
@@ -38,7 +38,7 @@ dependencies {
     // spigot
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     // bungee
-    compileOnly "net.md-5:bungeecord-api:1.16-R0.4-SNAPSHOT"
+    compileOnly "net.md-5:bungeecord-api:1.16-R0.4"
 
     // redis
     implementation group: 'redis.clients', name: 'jedis', version: '2.9.0'
@@ -60,16 +60,18 @@ dependencies {
     // minmessage
     implementation 'net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT'
     // apis
-    implementation "net.kyori:adventure-api:4.4.0"
-    implementation "net.kyori:adventure-text-serializer-plain:4.4.0"
-    implementation "net.kyori:adventure-text-serializer-gson:4.4.0"
-    implementation "net.kyori:adventure-text-serializer-legacy:4.4.0"
+    implementation "net.kyori:adventure-api:4.5.0"
+    implementation "net.kyori:adventure-text-serializer-plain:4.5.0"
+    implementation "net.kyori:adventure-text-serializer-gson:4.5.0"
+    implementation "net.kyori:adventure-text-serializer-legacy:4.5.0"
 
 }
 
 // shadow jar task (shades into jar)
 shadowJar {
+    relocate 'net.kyori', 'dev.spaceseries.spaceapi.lib.adventure'
     archiveName = "spaceapi-${version}.jar"
+    classifier = null
 }
 
 
@@ -113,17 +115,18 @@ publishing {
             url = project.ext.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
             credentials {
+//                username "$CI_REPO_USERNAME"
+//                password "$CI_REPO_PASSWORD"
                 username System.getenv("CI_REPO_USERNAME")
                 password System.getenv("CI_REPO_PASSWORD")
             }
         }
     }
     publications {
-        mavenJava(MavenPublication) {
-            from components.java
+        shadow(MavenPublication) { publication ->
+            from project.shadow.component(publication)
             artifact sourcesJar
             artifact javadocJar
         }
     }
 }
-
