@@ -13,7 +13,7 @@ group 'dev.spaceseries'
 
 project.ext.majorVersion = '1'
 project.ext.midVersion = '0'
-project.ext.minorVersion = '7'
+project.ext.minorVersion = '8'
 project.ext.versionType = 'SNAPSHOT'
 project.ext.version = project.ext.majorVersion + '.' + project.ext.midVersion + '.' + project.ext.minorVersion + '-' + project.ext.versionType;
 version = project.ext.version
@@ -21,6 +21,8 @@ version = project.ext.version
 // repos
 repositories {
     mavenCentral()
+    jcenter()
+
     maven {
         name = 'spigotmc-repo'
         url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
@@ -33,43 +35,59 @@ repositories {
 
 // dependencies
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-
     // spigot
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     // bungee
-    compileOnly "net.md-5:bungeecord-api:1.16-R0.4"
+    compileOnly 'net.md-5:bungeecord-api:1.16-R0.4'
 
     // redis
-    implementation group: 'redis.clients', name: 'jedis', version: '2.9.0'
+    implementation 'redis.clients:jedis:3.5.1'
 
     // hikari
-    implementation group: 'com.zaxxer', name: 'HikariCP', version: '3.1.0'
+    implementation('com.zaxxer:HikariCP:4.0.2') {
+        exclude group: 'org.slf4j'
+    }
 
     // snakeYAML
-    // https://mvnrepository.com/artifact/org.yaml/snakeyaml
-    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.8'
+    implementation 'org.yaml:snakeyaml:1.27'
 
     // google gson
     compileOnly 'com.google.code.gson:gson:2.8.6'
 
     // adventure
     // platform
-    implementation "net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT"
-    implementation "net.kyori:adventure-platform-bungeecord:4.0.0-SNAPSHOT"
+    implementation 'net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT'
+    implementation 'net.kyori:adventure-platform-bungeecord:4.0.0-SNAPSHOT'
     // minmessage
     implementation 'net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT'
     // apis
-    implementation "net.kyori:adventure-api:4.5.0"
-    implementation "net.kyori:adventure-text-serializer-plain:4.5.0"
-    implementation "net.kyori:adventure-text-serializer-gson:4.5.0"
-    implementation "net.kyori:adventure-text-serializer-legacy:4.5.0"
-
+    implementation 'net.kyori:adventure-api:4.5.0'
+    implementation 'net.kyori:adventure-text-serializer-plain:4.5.0'
+    implementation 'net.kyori:adventure-text-serializer-gson:4.5.0'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.5.0'
 }
 
 // shadow jar task (shades into jar)
 shadowJar {
-    relocate 'net.kyori', 'dev.spaceseries.spaceapi.lib.adventure'
+
+    // Adventure
+    relocate 'net.kyori', "${project.group}.spaceapi.lib.adventure"
+    relocate 'org.checkerframework', "${project.group}.spaceapi.lib.checkerframework"
+
+    // Google
+    relocate 'com.google.gson', "${project.group}.spaceapi.lib.gson"
+
+    // SnakeYaml
+    relocate 'org.yaml.snakeyaml', "${project.group}.spaceapi.lib.snakeyaml"
+    relocate 'biz.source_code.base64Coder', "${project.group}.spaceapi.lib.snakeyaml.base64Coder"
+
+    // HikariCP
+    relocate 'com.zaxxer.hikari', "${project.group}.spaceapi.lib.hikari"
+
+    // Redis
+    relocate 'redis.clients', "${project.group}.spaceapi.lib.redis"
+    relocate 'org.apache', "${project.group}.spaceapi.lib.apache"
+
     archiveName = "spaceapi-${version}.jar"
     classifier = null
 }
