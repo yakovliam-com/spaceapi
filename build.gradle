@@ -75,7 +75,7 @@ shadowJar {
     relocate 'org.checkerframework', "${project.group}.spaceapi.lib.checkerframework"
 
     // Google
-    relocate 'com.google', "${project.group}.spaceapi.lib.google"
+    relocate 'com.google.gson', "${project.group}.spaceapi.lib.gson"
 
     // SnakeYaml
     relocate 'org.yaml.snakeyaml', "${project.group}.spaceapi.lib.snakeyaml"
