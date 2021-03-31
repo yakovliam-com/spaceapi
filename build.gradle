@@ -61,10 +61,10 @@ dependencies {
     // minmessage
     implementation 'net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT'
     // apis
-    implementation 'net.kyori:adventure-api:4.5.0'
-    implementation 'net.kyori:adventure-text-serializer-plain:4.5.0'
-    implementation 'net.kyori:adventure-text-serializer-gson:4.5.0'
-    implementation 'net.kyori:adventure-text-serializer-legacy:4.5.0'
+    implementation 'net.kyori:adventure-api:4.7.0'
+    implementation 'net.kyori:adventure-text-serializer-plain:4.7.0'
+    implementation 'net.kyori:adventure-text-serializer-gson:4.7.0'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.7.0'
 }
 
 // shadow jar task (shades into jar)
