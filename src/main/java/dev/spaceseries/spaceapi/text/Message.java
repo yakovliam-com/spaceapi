@@ -233,7 +233,7 @@ public class Message {
                 componentBuilder.append(LegacyComponentSerializer.legacySection().deserialize(text.substring(i2 + 1)));
             }
 
-            components.append(loopCounter >= lines.size() - 1 ? componentBuilder.build() : componentBuilder.append(Component.text("\n")).build());
+            components.append(loopCounter >= lines.size() - 1 ? componentBuilder.build() : componentBuilder.append(Component.newline()).build());
 
             loopCounter++;
         }
