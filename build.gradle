@@ -120,10 +120,10 @@ publishing {
             url = project.ext.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 
             credentials {
-//                username "$CI_REPO_USERNAME"
-//                password "$CI_REPO_PASSWORD"
-                username System.getenv("CI_REPO_USERNAME")
-                password System.getenv("CI_REPO_PASSWORD")
+                username "$CI_REPO_USERNAME"
+                password "$CI_REPO_PASSWORD"
+//                username System.getenv("CI_REPO_USERNAME")
+//                password System.getenv("CI_REPO_PASSWORD")
             }
         }
     }
