@@ -2,14 +2,10 @@ package dev.spaceseries.spaceapi.abstraction.plugin;
 
 import dev.spaceseries.spaceapi.command.BukkitSpaceCommandSender;
 import dev.spaceseries.spaceapi.command.Command;
-import dev.spaceseries.spaceapi.text.Message;
-import net.kyori.adventure.platform.AudienceProvider;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -28,10 +24,6 @@ public class BukkitPlugin extends Plugin<JavaPlugin> {
      */
     public BukkitPlugin(JavaPlugin plugin) {
         this.plugin = plugin;
-        AudienceProvider audienceProvider = BukkitAudiences.create(plugin);
-
-        // initialize messages
-        Message.initAudience(audienceProvider);
     }
 
     /**
@@ -76,7 +68,7 @@ public class BukkitPlugin extends Plugin<JavaPlugin> {
         }
 
         @Override
-        public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String[] args) {
+        public boolean execute(CommandSender sender, String commandLabel, String[] args) {
             return command.execute(new BukkitSpaceCommandSender(sender), commandLabel, args);
         }
     }
