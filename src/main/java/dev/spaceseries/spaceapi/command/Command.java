@@ -2,8 +2,8 @@ package dev.spaceseries.spaceapi.command;
 
 import com.google.common.base.Joiner;
 import dev.spaceseries.spaceapi.abstraction.plugin.Plugin;
-import dev.spaceseries.spaceapi.text.Message;
 import dev.spaceseries.spaceapi.util.Utility;
+import net.md_5.bungee.api.ChatColor;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,12 +71,12 @@ public abstract class Command {
 
     public boolean execute(SpaceCommandSender sender, String commandLabel, String[] args) {
         if (!sender.isPlayer() && this.getClass().getDeclaredAnnotation(PlayersOnly.class) != null) {
-            Message.Global.PLAYERS_ONLY.msg(sender);
+            sender.sendMessage(ChatColor.RED + "Only players are allowed to do this.");
             return true;
         }
 
         if (!this.checkPermissions(sender)) {
-            Message.Global.ACCESS_DENIED.msg(sender);
+            sender.sendMessage(ChatColor.RED + "Insufficient permissions!");
             return true;
         }
 

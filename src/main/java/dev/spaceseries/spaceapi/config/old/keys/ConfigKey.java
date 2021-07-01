@@ -1,6 +1,6 @@
-package dev.spaceseries.spaceapi.config.keys;
+package dev.spaceseries.spaceapi.config.old.keys;
 
-import dev.spaceseries.spaceapi.config.impl.Configuration;
+import dev.spaceseries.spaceapi.config.old.impl.Configuration;
 
 public interface ConfigKey<T> {
 

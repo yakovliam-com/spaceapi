@@ -1,4 +1,4 @@
-package dev.spaceseries.spaceapi.config.impl;
+package dev.spaceseries.spaceapi.config.old.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;

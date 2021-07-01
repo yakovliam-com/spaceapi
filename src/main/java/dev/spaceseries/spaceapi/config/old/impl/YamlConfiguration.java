@@ -1,36 +1,40 @@
-package dev.spaceseries.spaceapi.config.impl;
+package dev.spaceseries.spaceapi.config.old.impl;
 
 import com.google.common.base.Charsets;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class JsonConfiguration extends ConfigurationProvider {
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
 
-    public JsonConfiguration() {
+public class YamlConfiguration extends ConfigurationProvider {
+
+    public YamlConfiguration() {
     }
 
-    private final Gson json = new GsonBuilder().serializeNulls().setPrettyPrinting().registerTypeAdapter(Configuration.class, new JsonSerializer<Configuration>() {
-        @Override
-        public JsonElement serialize(Configuration src, Type typeOfSrc, JsonSerializationContext context) {
-            return context.serialize(src.self);
-        }
-    }).create();
+    private final ThreadLocal<Yaml> yaml = ThreadLocal.withInitial(() -> {
+        Representer representer = new Representer() {
+            {
+                representers.put(Configuration.class, data -> represent(((Configuration) data).self));
+            }
+        };
+
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+
+        return new Yaml(new Constructor(), representer, options);
+    });
 
     @Override
     public void save(Configuration config, File file) throws IOException {
@@ -41,7 +45,7 @@ public class JsonConfiguration extends ConfigurationProvider {
 
     @Override
     public void save(Configuration config, Writer writer) {
-        json.toJson(config.self, writer);
+        yaml.get().dump(config.self, writer);
     }
 
     @Override
@@ -64,7 +68,7 @@ public class JsonConfiguration extends ConfigurationProvider {
     @Override
     @SuppressWarnings("unchecked")
     public Configuration load(Reader reader, Configuration defaults) {
-        Map<String, Object> map = json.fromJson(reader, LinkedHashMap.class);
+        Map<String, Object> map = yaml.get().loadAs(reader, LinkedHashMap.class);
         if (map == null) {
             map = new LinkedHashMap<>();
         }
@@ -77,8 +81,13 @@ public class JsonConfiguration extends ConfigurationProvider {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Configuration load(InputStream is, Configuration defaults) {
-        return load(new InputStreamReader(is, Charsets.UTF_8), defaults);
+        Map<String, Object> map = yaml.get().loadAs(is, LinkedHashMap.class);
+        if (map == null) {
+            map = new LinkedHashMap<>();
+        }
+        return new Configuration(map, defaults);
     }
 
     @Override
@@ -89,7 +98,7 @@ public class JsonConfiguration extends ConfigurationProvider {
     @Override
     @SuppressWarnings("unchecked")
     public Configuration load(String string, Configuration defaults) {
-        Map<String, Object> map = json.fromJson(string, LinkedHashMap.class);
+        Map<String, Object> map = yaml.get().loadAs(string, LinkedHashMap.class);
         if (map == null) {
             map = new LinkedHashMap<>();
         }

@@ -1,11 +1,11 @@
-package dev.spaceseries.spaceapi.config.obj;
+package dev.spaceseries.spaceapi.config.old.obj;
 
 import dev.spaceseries.spaceapi.abstraction.plugin.BukkitPlugin;
 import dev.spaceseries.spaceapi.abstraction.plugin.BungeePlugin;
 import dev.spaceseries.spaceapi.abstraction.plugin.Plugin;
-import dev.spaceseries.spaceapi.config.impl.Configuration;
-import dev.spaceseries.spaceapi.config.impl.ConfigurationProvider;
-import dev.spaceseries.spaceapi.config.impl.YamlConfiguration;
+import dev.spaceseries.spaceapi.config.old.impl.Configuration;
+import dev.spaceseries.spaceapi.config.old.impl.ConfigurationProvider;
+import dev.spaceseries.spaceapi.config.old.impl.YamlConfiguration;
 
 import java.io.*;
 import java.util.logging.Level;
